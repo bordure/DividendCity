@@ -25,8 +25,9 @@ class CompaniesDividend(models.Model):
     id = models.AutoField(primary_key=True)
     ticker = models.CharField(max_length=255)
     date_of_dividend = models.DateField()
+    ex_dividend_date = models.DateField()
     value_of_dividend = models.DecimalField(max_digits=10, decimal_places=2)
-    multiplier = models.DecimalField(max_digits=10, decimal_places=2)
+    price_of_dividend = models.BigIntegerField()
 
     class Meta:
         db_table = 'companies_dividend'

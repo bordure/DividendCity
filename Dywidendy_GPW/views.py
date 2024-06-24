@@ -38,7 +38,7 @@ def portfolio(request):
             stock.current_price = float(current_price_obj.price)
             
             # Calculate current value
-            stock.current_value = stock.quantity * stock.current_price
+            stock.current_value = round(stock.quantity * stock.current_price,2)
             
             # Calculate profit
             stock.profit = float(stock.current_value) - (float(stock.average_purchase_price) * float(stock.quantity))
