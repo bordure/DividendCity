@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dividends</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom dark mode styles */
+        body {
+            background-color: #343a40;
+            color: #f8f9fa; /* Light text color */
+            padding: 20px;
+        }
+        .table-custom {
+            background-color: #212529; /* Darker table background */
+            color: #f8f9fa; /* Light text color */
+            border: 1px solid #454d55; /* Darker border */
+        }
+        .table-custom th,
+        .table-custom td {
+            border: 1px solid #454d55; /* Darker border */
+        }
+        .table-custom thead {
+            background-color: #343a40; /* Darker header background */
+        }
+        .card-text {
+            text-align: center; /* Center align text */
+            font-size: 24px; /* Larger font size for annual dividends */
+        }
+        .monthly-dividends {
+            text-align: center; /* Center align text */
+            font-size: 18px; /* Smaller font size for monthly and daily dividends */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Dividends</h2>
+        
+        <!-- Total annual, monthly, daily dividends -->
+        <div class="card mb-3">
+            <div class="card-body bg-dark">
+                <p class="card-text">Total Annual Dividends: {{ total_annual_dividends }} zł</p>
+                <p class="monthly-dividends">Monthly Dividends: {{ total_monthly_dividends }} zł</p>
+                <p class="monthly-dividends">Daily Dividends: {{ total_daily_dividends }} zł</p>
+                <p class="monthly-dividends">Yield: {{ dividend_yield }}%</p>
+            </div>
+        </div>
+        
+        <!-- Dividend table -->
+        <div class="table-responsive">
+            <table class="table table-custom table-striped">
+                <thead>
+                    <tr>
+                        <th>Stock Name</th>
+                        <th>Ticker</th>
+                        <th>Quantity</th>
+                        <th>Annual Dividend Value (PLN)</th>
+                        <th>Monthly Dividend Value (PLN)</th>
+                        <th>Daily Dividend Value (PLN)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in dividend_table_data %}
+                    <tr>
+                        <td><a href="{% url 'company_info' data.ticker %}" class="text-light">{{ data.name }}</a></td>
+                        <td>{{ data.ticker }}</td>
+                        <td>{{ data.quantity }}</td>
+                        <td>{{ data.annual_dividend_value }} zł</td>
+                        <td>{{ data.monthly_dividend_value }} zł</td>
+                        <td>{{ data.daily_dividend_value }} zł</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <a href="{% url 'portfolio' %}" class="btn btn-primary">Back to Portfolio</a>
+        <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
+    </div>
+
+    <!-- Bootstrap JS and dependencies (optional for certain features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

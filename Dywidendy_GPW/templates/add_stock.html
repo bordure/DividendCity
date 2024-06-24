@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Stock</title>
+    <!-- Bootstrap CSS - Dark theme -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <style>
+        /* Custom dark mode styles */
+        body {
+            background-color: #343a40;
+            color: #f8f9fa; /* Light text color */
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-control {
+            background-color: #454d55;
+            color: #f8f9fa;
+        }
+        .form-control:focus {
+            background-color: #454d55;
+            color: #f8f9fa;
+        }
+        label {
+            font-weight: bold;
+        }
+        .ui-autocomplete {
+            max-height: 200px;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+            z-index: 1000;
+        }
+        .ui-menu-item {
+            padding: 10px;
+            color: #f8f9fa;
+            background-color: #343a40;
+            border-bottom: 1px solid #454d55;
+        }
+        .ui-menu-item:hover {
+            background-color: #495057;
+            cursor: pointer;
+        }
+        .ui-helper-hidden-accessible {
+            display: none;
+        }
+    </style>
+
+    <!-- jQuery and jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+    $(function() {
+        // Initialize Autocomplete on the text field with id "ticker"
+        $("#ticker").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{% url 'autocomplete_companies' %}",  // Endpoint for Autocomplete handling
+                    dataType: "json",
+                    data: {
+                        term: request.term  // Search term (company name)
+                    },
+                    success: function(data) {
+                        response(data);  // Return data as suggestions
+                    }
+                });
+            },
+            minLength: 2  // Minimum length of text to start searching
+        });
+    });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Add Stock</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="ticker">Ticker:</label>
+                <input type="text" class="form-control" id="ticker" name="ticker" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" class="form-control" name="quantity" required>
+            </div>
+            <div class="form-group">
+                <label for="average_purchase_price">Average Purchase Price:</label>
+                <input type="number" class="form-control" step="0.01" name="average_purchase_price" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+        <a href="{% url 'portfolio' %}" class="btn btn-secondary mt-3">Back to Portfolio</a>
+    </div>
+
+    <!-- Bootstrap JS (optional, not required for styling) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

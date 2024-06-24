@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom dark mode styles */
+        body {
+            background-color: #343a40;
+            color: #f8f9fa; /* Light text color */
+            padding: 20px;
+        }
+        .table-custom {
+            background-color: #212529; /* Darker table background */
+            color: #f8f9fa; /* Light text color */
+            border: 1px solid #454d55; /* Darker border */
+        }
+        .table-custom th,
+        .table-custom td {
+            border: 1px solid #454d55; /* Darker border */
+        }
+        .table-custom thead {
+            background-color: #343a40; /* Darker header background */
+        }
+        .table-custom .profit-green {
+            color: #28a745; /* Green profit text */
+        }
+        .table-custom .loss-red {
+            color: #dc3545; /* Red loss text */
+        }
+        .wider-cell {
+            width: 130px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Portfolio</h2>
+        <div class="table-responsive">
+            <table class="table table-custom table-striped">
+                <thead>
+                    <tr>
+                        <th>Stock Name</th>
+                        <th>Ticker</th>
+                        <th>Quantity</th>
+                        <th>Average Purchase Price (PLN)</th>
+                        <th>Current Price (PLN)</th>
+                        <th>Current Value (PLN)</th>
+                        <th class="wider-cell">Profit (PLN)</th>
+                        <th>Profit Percentage (%)</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in portfolio %}
+                    <tr>
+                        <td><a href="{% url 'company_info' stock.ticker.ticker %}" class="text-light">{{ stock.ticker.name }}</a></td>
+                        <td>{{ stock.ticker.ticker }}</td>
+                        <td>{{ stock.quantity }}</td>
+                        <td>{{ stock.average_purchase_price }} zł</td>
+                        <td>{{ stock.current_price }} zł</td>
+                        <td>{{ stock.current_value }} zł</td>
+                        <td class="{% if stock.profit >= 0 %}profit-green{% else %}loss-red{% endif %}">{{ stock.profit }} zł</td>
+                        <td class="{% if stock.profit >= 0 %}profit-green{% else %}loss-red{% endif %}">{{ stock.percentage }}%</td>
+                        <td><a href="{% url 'edit_stock' stock.id %}" class="btn btn-warning btn-sm">Edit</a></td>
+                        <td>
+                            <form action="{% url 'delete_stock' stock.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="{% url 'add_stock' %}" class="btn btn-primary">Add Stock</a>
+        <a href="{% url 'dividends' %}" class="btn btn-primary">Show dividends</a>
+        <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
+    </div>
+
+    <!-- Bootstrap JS and dependencies (optional for certain features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
