@@ -105,9 +105,8 @@ def dividends(request):
     # Calculate total annual dividends and prepare data for table
     total_annual_dividends = 0
     dividend_table_data = []
-    total_stocks_value = 0
-    total_dividends = 0
     dividend_yield = 0
+    number_of_dividends = 0
     
     for item in portfolio:
         # Query dividends for the current year and calculate total value for each ticker
@@ -137,9 +136,10 @@ def dividends(request):
         
         # Accumulate total annual dividends
         total_annual_dividends += dividend_value_per_stock
-        dividend_yield += (total_dividend_value / item.average_purchase_price)
+        dividend_yield += (total_dividend_value / item.average_purchase_price) * 100
+        number_of_dividends += 1
 
-    dividend_yield *= 100
+    dividend_yield /= number_of_dividends
     #dividend_yield = 0
     # Convert total annual dividends to monthly and daily values
     total_monthly_dividends = round(total_annual_dividends / 12,2)
@@ -159,9 +159,15 @@ def company_info(request, ticker):
     company = get_object_or_404(CompaniesName, ticker=ticker)
     dividends = CompaniesDividend.objects.filter(ticker=ticker).order_by('-date_of_dividend')
     
+    # Prepare data for the chart
+    dividend_dates = [div.date_of_dividend.strftime('%Y-%m-%d') for div in dividends][::-1]
+    dividend_values = [float(div.value_of_dividend) for div in dividends][::-1]
+    print(dividend_dates, dividend_values)
     context = {
         'company': company,
         'dividends': dividends,
+        'dividend_dates': dividend_dates,
+        'dividend_values': dividend_values,
     }
     return render(request, 'company_info.html', context)
 

@@ -1,5 +1,3 @@
-<!-- company_info.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,10 +25,21 @@
         .table-custom thead {
             background-color: #343a40; /* Darker header background */
         }
+        #dividendChart {
+            background-color: #212529; /* Darker chart background */
+            border: 1px solid #454d55; /* Darker border */
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+                <!-- Dividend chart -->
+                <div class="card mb-3">
+                    <div class="card-body bg-dark">
+                        <canvas id="dividendChart"></canvas>
+                    </div>
+                </div>
         <h2>{{ company.name }} ({{ company.ticker }})</h2>
         
         <h3>Dividend History</h3>
@@ -39,18 +48,22 @@
                 <thead>
                     <tr>
                         <th>Date of Dividend</th>
-                        <th>Value of Dividend (PLN)</th>
+                        <th>Ex-Date of Dividend</th>
+                        <th>Dividend per Share (PLN)</th>
+                        <th>Dividend Value (PLN)</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for dividend in dividends %}
                     <tr>
                         <td>{{ dividend.date_of_dividend }}</td>
+                        <td>{{ dividend.ex_dividend_date }}</td>
                         <td>{{ dividend.value_of_dividend }} zł</td>
+                        <td>{{ dividend.price_of_dividend }} zł</td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="2">No dividend history available.</td>
+                        <td colspan="4">No dividend history available.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -65,5 +78,37 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('dividendChart').getContext('2d');
+            const dividendData = {
+                labels: {{ dividend_dates|safe }},
+                datasets: [{
+                    label: 'Dividend per Share (PLN)',
+                    data: {{ dividend_values|safe }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            };
+            const config = {
+                type: 'line',
+                data: dividendData,
+                options: {
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+            const dividendChart = new Chart(ctx, config);
+        });
+    </script>
 </body>
 </html>
