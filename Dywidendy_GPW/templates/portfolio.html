@@ -34,11 +34,29 @@
         .wider-cell {
             width: 130px;
         }
+        .card-text{
+            font-size: 30px;
+        }
+        .profit-green-card{
+            color:#28a745;
+        }
+        .loss-red-card{
+            color:#dc3545;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Portfolio</h2>
+
+        <div class="card mb-3">
+            <div class="card-body bg-dark">
+                <p class="{% if total_profit_pln >= 0 %}profit-green-card card-text{% else %}loss-red-card card-text{% endif %}">Total portfolio value: {{ total_holdings_value }}zł</p>
+                <p class="{% if total_profit_pln >= 0 %}profit-green-card card-text{% else %}loss-red-card card-text{% endif %}">Profit (%): {{ total_profit_percentage }}%</p>
+                <p class="{% if total_profit_pln >= 0 %}profit-green-card card-text{% else %}loss-red-card card-text{% endif %}">Profit (PLN): {{ total_profit_pln }} </p>
+            </div>
+        </div>
+        
         <div class="table-responsive">
             <table class="table table-custom table-striped">
                 <thead>
@@ -80,6 +98,7 @@
         </div>
         <a href="{% url 'add_stock' %}" class="btn btn-primary">Add Stock</a>
         <a href="{% url 'dividends' %}" class="btn btn-primary">Show dividends</a>
+        <a href="{% url 'dividend_calendar' %}" class="btn btn-primary">Show dividends calendar</a>
         <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
     </div>
 

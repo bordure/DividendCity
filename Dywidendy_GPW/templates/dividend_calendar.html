@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dividend Calendar</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom dark mode styles */
+        body {
+            background-color: #343a40;
+            color: #f8f9fa; /* Light text color */
+            padding: 20px;
+        }
+        .card-custom {
+            background-color: #1b3b5f; /* Dark blue background */
+            color: #f8f9fa; /* Light text color */
+            border: 1px solid #454d55; /* Darker border */
+            margin-bottom: 15px; /* Space between cards */
+            padding: 20px; /* Inner padding */
+            border-radius: 30px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+        }
+        .card-custom h5 {
+            margin-bottom: 0; /* Remove bottom margin */
+        }
+        .card-wrapper {
+            width: 100%; /* Full width for single rectangle per line */
+            margin-bottom: 15px; /* Space between cards */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Forthcoming Dividends</h2>
+        <div class="container-custom">
+            {% for div in forthcoming_dividends %}
+            <div class="card-wrapper">
+                <div class="card-custom">
+                    <h5>{{ div.ticker }}</h5>
+                    <p>Date: {{ div.date_of_dividend }}</p>
+                    <p>Total Dividend: +{{ div.total_dividend }} zł</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="card-custom">
+                <p>No forthcoming dividends available.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'portfolio' %}" class="btn btn-primary">Back to Portfolio</a>
+        <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
+    </div>
+
+    <!-- Bootstrap JS and dependencies (optional for certain features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

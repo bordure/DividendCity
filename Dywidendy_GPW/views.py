@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from .models import CompaniesName, CompaniesPrice, UserPortfolio, CompaniesDividend
 from .forms import EditStockForm 
 from datetime import datetime
+from datetime import timedelta, date
 
 def user_login(request):
     if request.method == 'POST':
@@ -30,6 +31,10 @@ def user_logout(request):
 @login_required
 def portfolio(request):
     portfolio = UserPortfolio.objects.filter(user=request.user)
+    total_holdings_value = 0
+    total_profit_percentage = 0
+    total_purchase_price = 0
+    total_profit_pln = 0
     
     for stock in portfolio:
         try:
@@ -43,7 +48,11 @@ def portfolio(request):
             # Calculate profit
             stock.profit = float(stock.current_value) - (float(stock.average_purchase_price) * float(stock.quantity))
             stock.profit = round(stock.profit, 2)
-            
+
+            #calculate total holdings value
+            total_holdings_value += float(stock.quantity) * float(stock.current_price)
+            total_purchase_price += float(stock.quantity) * float(stock.average_purchase_price)
+
             # Calculate percentage
             if stock.average_purchase_price != 0:
                 stock.percentage = (float(stock.profit) / (float(stock.average_purchase_price) * float(stock.quantity))) * 100
@@ -63,8 +72,18 @@ def portfolio(request):
             stock.profit = 0.0
             stock.percentage = 0.0
             stock.profit_color = 'black'  # Handle missing price
+
+        total_profit_percentage = (total_holdings_value - total_purchase_price) / total_purchase_price * 100
+        total_profit_pln = total_holdings_value - total_purchase_price
+
+        context = {
+            'portfolio': portfolio,
+            'total_holdings_value': round(total_holdings_value,2),
+            'total_profit_percentage': round(total_profit_percentage,2),
+            'total_profit_pln': round(total_profit_pln, 2),
+        }
         
-    return render(request, 'portfolio.html', {'portfolio': portfolio})
+    return render(request, 'portfolio.html', context)
 
 @login_required
 def add_stock(request):
@@ -194,3 +213,32 @@ def delete_stock(request, stock_id):
         return redirect('portfolio')
 
     return render(request, 'confirm_delete.html', {'stock': stock})
+
+@login_required
+def dividend_calendar(request):
+    portfolio = UserPortfolio.objects.filter(user=request.user)
+    forthcoming_dividends = []
+
+    for stock in portfolio:
+        try:
+            companies_dividends = CompaniesDividend.objects.filter(ticker=stock.ticker.ticker, date_of_dividend__gt=date.today()-timedelta(days=1)).order_by('date_of_dividend')
+            company_name = CompaniesName.objects.get(ticker=stock.ticker.ticker).name
+            
+            for div in companies_dividends:
+                forthcoming_dividends.append({
+                    'name': company_name,
+                    'ticker': stock.ticker.ticker,
+                    'date_of_dividend': div.date_of_dividend,
+                    'value_of_dividend': div.value_of_dividend,
+                    'total_dividend': stock.quantity * div.value_of_dividend
+                })
+        except Exception as e:
+            continue
+
+    forthcoming_dividends.sort(key=lambda x: x['date_of_dividend'])
+    
+    context = {
+        'forthcoming_dividends': forthcoming_dividends,
+    }
+
+    return render(request, 'dividend_calendar.html', context)
