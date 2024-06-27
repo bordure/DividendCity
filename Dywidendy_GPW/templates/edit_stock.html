@@ -1,6 +1,9 @@
+{% extends "base.html" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+{% block head %}
+{{ block.super }}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Stock</title>
@@ -26,8 +29,10 @@
             border-color: #6c757d;
         }
     </style>
+{% endblock head %}
 </head>
 <body>
+{% block content %}
     <div class="container">
         <h2>Edit Stock</h2>
         <form method="post">
@@ -37,5 +42,6 @@
         </form>
         <a href="{% url 'portfolio' %}" class="btn btn-secondary-dark">Cancel</a>
     </div>
+{% endblock content %}
 </body>
 </html>

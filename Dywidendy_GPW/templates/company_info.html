@@ -1,6 +1,9 @@
+{% extends "base.html" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+{% block head %}
+{{ block.super }}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ company.name }}</title>
@@ -31,8 +34,10 @@
             padding: 20px;
         }
     </style>
+{% endblock head %}
 </head>
 <body>
+{% block content %}
     <div class="container">
                 <!-- Dividend chart -->
                 <div class="card mb-3">
@@ -110,5 +115,6 @@
             const dividendChart = new Chart(ctx, config);
         });
     </script>
+{% endblock content %}
 </body>
 </html>

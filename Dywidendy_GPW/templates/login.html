@@ -1,14 +1,20 @@
+{% extends "base.html" %}
 <!DOCTYPE html>
 <html>
 <head>
+{% block head %}
+{{ block.super }}
     <title>Login</title>
+{% endblock head %}
 </head>
 <body>
+{% block content %}
     <h2>Login</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Login</button>
     </form>
+{% endblock content %}
 </body>
 </html>
