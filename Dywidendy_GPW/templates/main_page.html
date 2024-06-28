@@ -1,0 +1,64 @@
+<HTML>
+{% extends "base.html" %}
+<head>
+{% block head %}
+    {{ block.super }}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom dark mode styles */
+        body {
+            background: linear-gradient(135deg, #050d21, #1a2e4a);
+            color: #f8f9fa; /* Light text color */
+            padding: 20px;
+        }
+        .main-text {
+            font-size: 50px; /* Adjust the size as needed */
+            text-align: center;
+            margin-top: 20px;
+        }
+        .logo {
+            display: block;
+            margin: 20px auto;
+            width: 500px;   
+        }
+        .btn-primary {
+            background-color: #1a2e4a;
+            border-color: #1a2e4a;
+            color: #f8f9fa;
+        }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+            background-color: #273a5e;
+            border-color: #273a5e;
+            color: #f8f9fa;
+        }
+    </style>
+{% endblock head %}
+</head>
+<body>
+{% block content %}
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary text-light" href="{% url 'login' %}">Login</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+    <div class="container">
+        <h1 class="main-text">Wszystko co potrzebujesz do inwestowania dywidendowego w jednym miejscu</h1>
+        <img src="{% static 'logo-removebg.png' %}" alt="Logo" class="logo">
+    </div>
+
+    <!-- Bootstrap JS and dependencies (optional for certain features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock content %}
+</body>
+</HTML>

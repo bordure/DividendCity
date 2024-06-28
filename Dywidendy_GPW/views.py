@@ -236,9 +236,12 @@ def dividend_calendar(request):
             continue
 
     forthcoming_dividends.sort(key=lambda x: x['date_of_dividend'])
-    
+
     context = {
         'forthcoming_dividends': forthcoming_dividends,
     }
 
     return render(request, 'dividend_calendar.html', context)
+
+def main_page(request):
+    return render(request, 'main_page.html')
