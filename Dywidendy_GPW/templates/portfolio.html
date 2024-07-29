@@ -74,8 +74,6 @@
                         <th>Current Value (PLN)</th>
                         <th class="wider-cell">Profit (PLN)</th>
                         <th>Profit Percentage (%)</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -89,13 +87,6 @@
                         <td>{{ stock.current_value }} zł</td>
                         <td class="{% if stock.profit >= 0 %}profit-green{% else %}loss-red{% endif %}">{{ stock.profit }} zł</td>
                         <td class="{% if stock.profit >= 0 %}profit-green{% else %}loss-red{% endif %}">{{ stock.percentage }}%</td>
-                        <td><a href="{% url 'edit_stock' stock.id %}" class="btn btn-warning btn-sm">Edit</a></td>
-                        <td>
-                            <form action="{% url 'delete_stock' stock.id %}" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

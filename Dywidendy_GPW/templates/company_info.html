@@ -7,30 +7,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ company.name }}</title>
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Custom dark mode styles */
         body {
             background-color: #343a40;
-            color: #f8f9fa; /* Light text color */
+            color: #f8f9fa; 
             padding: 20px;
         }
         .table-custom {
-            background-color: #212529; /* Darker table background */
-            color: #f8f9fa; /* Light text color */
-            border: 1px solid #454d55; /* Darker border */
+            background-color: #212529; 
+            color: #f8f9fa;
+            border: 1px solid #454d55;
         }
         .table-custom th,
         .table-custom td {
-            border: 1px solid #454d55; /* Darker border */
+            border: 1px solid #454d55;
         }
         .table-custom thead {
-            background-color: #343a40; /* Darker header background */
+            background-color: #343a40;
         }
         #dividendChart {
-            background-color: #212529; /* Darker chart background */
-            border: 1px solid #454d55; /* Darker border */
+            background-color: #212529; 
+            border: 1px solid #454d55; 
             padding: 20px;
         }
     </style>
@@ -39,13 +37,12 @@
 <body>
 {% block content %}
     <div class="container">
-                <!-- Dividend chart -->
-                <div class="card mb-3">
-                    <div class="card-body bg-dark">
-                        <canvas id="dividendChart"></canvas>
-                    </div>
-                </div>
-        <h2>{{ company.name }} ({{ company.ticker }})</h2>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>{{ company.name }} ({{ company.ticker }})</h2>
+            {% if in_portfolio %}
+            <a href="{% url 'edit_stock' portfolio_stock.id %}" class="btn btn-warning">Edit Stock in Portfolio</a>
+            {% endif %}
+        </div>
         
         <h3>Dividend History</h3>
         <div class="table-responsive">
@@ -74,6 +71,12 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="card mb-3">
+            <div class="card-body bg-dark">
+                <canvas id="dividendChart"></canvas>
+            </div>
+        </div> 
         
         <a href="{% url 'portfolio' %}" class="btn btn-primary">Back to Portfolio</a>
         <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>

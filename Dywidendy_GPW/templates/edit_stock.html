@@ -28,6 +28,10 @@
             background-color: #6c757d;
             border-color: #6c757d;
         }
+        .btn-danger-dark {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
     </style>
 {% endblock head %}
 </head>
@@ -41,6 +45,11 @@
             <button type="submit" class="btn btn-primary-dark">Save Changes</button>
         </form>
         <a href="{% url 'portfolio' %}" class="btn btn-secondary-dark">Cancel</a>
+        <form action="{% url 'delete_stock' stock.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger-dark" 
+                    onclick="return confirm('Are you sure you want to delete this stock?');">Delete</button>
+        </form>
     </div>
 {% endblock content %}
 </body>

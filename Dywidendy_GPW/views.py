@@ -5,10 +5,11 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.http import JsonResponse
+from django.contrib import messages
 from .models import CompaniesName, CompaniesPrice, UserPortfolio, CompaniesDividend
 from .forms import EditStockForm 
 from datetime import datetime
-from datetime import timedelta, date
+from datetime import timedelta, date    
 
 def user_login(request):
     if request.method == 'POST':
@@ -20,6 +21,10 @@ def user_login(request):
             if user is not None:
                 login(request, user)
                 return redirect('portfolio')
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            messages.error(request, 'Invalid username or password.')
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
@@ -174,6 +179,7 @@ def dividends(request):
     
     return render(request, 'dividends.html', context)
 
+@login_required
 def company_info(request, ticker):
     company = get_object_or_404(CompaniesName, ticker=ticker)
     dividends = CompaniesDividend.objects.filter(ticker=ticker).order_by('-date_of_dividend')
@@ -182,12 +188,24 @@ def company_info(request, ticker):
     dividend_dates = [div.date_of_dividend.strftime('%Y-%m-%d') for div in dividends][::-1]
     dividend_values = [float(div.value_of_dividend) for div in dividends][::-1]
     print(dividend_dates, dividend_values)
+    
+    # Check if the company is in the user's portfolio
+    try:
+        portfolio_stock = UserPortfolio.objects.get(user=request.user, ticker__ticker=ticker)
+        in_portfolio = True
+    except UserPortfolio.DoesNotExist:
+        portfolio_stock = None
+        in_portfolio = False
+
     context = {
         'company': company,
         'dividends': dividends,
         'dividend_dates': dividend_dates,
         'dividend_values': dividend_values,
+        'in_portfolio': in_portfolio,
+        'portfolio_stock': portfolio_stock,
     }
+    
     return render(request, 'company_info.html', context)
 
 @login_required
@@ -202,17 +220,21 @@ def edit_stock(request, stock_id):
     else:
         form = EditStockForm(instance=stock)
 
-    return render(request, 'edit_stock.html', {'form': form})
+    context = {
+        'form': form,
+        'stock': stock,
+    }
+    return render(request, 'edit_stock.html', context)
 
 @login_required
 def delete_stock(request, stock_id):
     stock = get_object_or_404(UserPortfolio, id=stock_id, user=request.user)
-
+    
     if request.method == 'POST':
         stock.delete()
         return redirect('portfolio')
 
-    return render(request, 'confirm_delete.html', {'stock': stock})
+    return redirect('portfolio')
 
 @login_required
 def dividend_calendar(request):
