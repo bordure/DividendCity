@@ -21,3 +21,9 @@ class InvestmentForm(forms.Form):
         label='Monthly Investment (PLN)',
         widget=forms.NumberInput(attrs={'placeholder': 'Enter amount in PLN'})
     )
+
+    def clean_monthly_investment(self):
+        data = self.cleaned_data['monthly_investment']
+        if data < 0:
+            raise forms.ValidationError("Monthly investment must be a positive number.")
+        return data
