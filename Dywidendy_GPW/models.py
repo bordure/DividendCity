@@ -33,7 +33,7 @@ class CompaniesDividend(models.Model):
         db_table = 'companies_dividend'
 
     def __str__(self):
-        return f"{self.ticker} - {self.date_of_dividend}: {self.value_of_dividend} ({self.multiplier})"
+        return f"{self.ticker} {self.date_of_dividend} {self.ex_dividend_date} {self.value_of_dividend} {self.price_of_dividend}"
 
 class UserPortfolio(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
