@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.contrib import messages
-from .models import CompaniesName, CompaniesPrice, UserPortfolio, CompaniesDividend
-from .forms import EditStockForm 
+from .models import CompaniesName, CompaniesPrice, UserPortfolio, CompaniesDividend, UserProfile
+from .forms import EditStockForm, DividendGoalForm
 from datetime import datetime
 from datetime import timedelta, date    
 
@@ -19,8 +19,10 @@ def user_login(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user is not None:
+                if not hasattr(user, 'userprofile'):
+                    UserProfile.objects.create(user=user)
                 login(request, user)
-                return redirect('portfolio')
+                return redirect("portfolio")
             else:
                 messages.error(request, 'Invalid username or password.')
         else:
@@ -120,34 +122,26 @@ def autocomplete_companies(request):
     return JsonResponse(data, safe=False)
 
 def dividends(request):
-    # Get current year
     current_year = datetime.now().year
-    
-    # Retrieve user's portfolio with related ticker information
     portfolio = UserPortfolio.objects.filter(user=request.user).select_related('ticker')
+    profile = UserProfile.objects.get(user=request.user)
+    monthly_goal = profile.monthly_dividend_goal
     
-    # Calculate total annual dividends and prepare data for table
     total_annual_dividends = 0
     dividend_table_data = []
     dividend_yield = 0
     number_of_dividends = 0
     
     for item in portfolio:
-        # Query dividends for the current year and calculate total value for each ticker
         dividends = CompaniesDividend.objects.filter(ticker=item.ticker.ticker, date_of_dividend__year=current_year)
         total_dividend_value = dividends.aggregate(total=Sum('value_of_dividend'))['total'] or 0
-        
-        # Calculate monthly and daily dividends based on total dividend value
         monthly_dividend_value = total_dividend_value / 12
         daily_dividend_value = total_dividend_value / 365
-        
-        # Calculate dividend value based on quantity of stocks
         dividend_value_per_stock = item.quantity * total_dividend_value
     
         if total_dividend_value == 0:
             continue
         
-        # Prepare data for dividend table
         dividend_table_data.append({
             'ticker': item.ticker.ticker,
             'name': item.ticker.name,
@@ -164,17 +158,22 @@ def dividends(request):
         number_of_dividends += 1
 
     dividend_yield /= number_of_dividends
-    #dividend_yield = 0
-    # Convert total annual dividends to monthly and daily values
     total_monthly_dividends = round(total_annual_dividends / 12,2)
     total_daily_dividends = round(total_annual_dividends / 365,2)
-    
+    percentage_accomplished = (total_monthly_dividends / monthly_goal) * 100 if monthly_goal > 0 else 0
+    remaining_percentage = 100 - percentage_accomplished
+    remaining_goal = monthly_goal - total_monthly_dividends
+
     context = {
         'dividend_table_data': dividend_table_data,
         'total_annual_dividends': total_annual_dividends,
         'total_monthly_dividends': total_monthly_dividends,
         'total_daily_dividends': total_daily_dividends,
         'dividend_yield': round(dividend_yield,2),
+        'dividend_goal': monthly_goal,
+        'percentage_accomplished': percentage_accomplished,
+        'remaining_percentage': remaining_percentage,
+        'remaining_goal': remaining_goal,
     }
     
     return render(request, 'dividends.html', context)
@@ -267,3 +266,15 @@ def dividend_calendar(request):
 
 def main_page(request):
     return render(request, 'main_page.html')
+
+@login_required
+def set_dividend_goal(request):
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = DividendGoalForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('dividends')
+    else:
+        form = DividendGoalForm(instance=profile)
+    return render(request, 'set_dividend_goal.html', {'form': form})

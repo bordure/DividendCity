@@ -46,3 +46,10 @@ class UserPortfolio(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.ticker.ticker}: {self.quantity} shares at {self.average_purchase_price}"
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    monthly_dividend_goal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return self.user.username

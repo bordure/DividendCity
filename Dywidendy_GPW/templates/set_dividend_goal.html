@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% block head %}
+{{ block.super }}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Dividend Goal</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #f8f9fa;
+            padding: 20px;
+        }
+        .form-control-dark {
+            background-color: #212529;
+            color: #f8f9fa;
+            border: 1px solid #454d55;
+        }
+    </style>
+{% endblock head %}
+</head>
+<body>
+{% block content %}
+    <div class="container">
+        <h2>Set Monthly Dividend Goal</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Save Goal</button>
+        </form>
+        <a href="{% url 'portfolio' %}" class="btn btn-secondary">Back to Portfolio</a>
+    </div>
+{% endblock content %}
+</body>
+</html>
