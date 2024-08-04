@@ -83,11 +83,11 @@ def portfolio(request):
         total_profit_percentage = (total_holdings_value - total_purchase_price) / total_purchase_price * 100
         total_profit_pln = total_holdings_value - total_purchase_price
 
-        context = {
-            'portfolio': portfolio,
-            'total_holdings_value': round(total_holdings_value,2),
-            'total_profit_percentage': round(total_profit_percentage,2),
-            'total_profit_pln': round(total_profit_pln, 2),
+    context = {
+        'portfolio': portfolio,
+        'total_holdings_value': round(total_holdings_value,2),
+        'total_profit_percentage': round(total_profit_percentage,2),
+        'total_profit_pln': round(total_profit_pln, 2),
         }
         
     return render(request, 'portfolio.html', context)
@@ -131,6 +131,9 @@ def dividends(request):
     dividend_table_data = []
     dividend_yield = 0
     number_of_dividends = 0
+    total_monthly_dividends = 0
+    total_daily_dividends = 0
+    remaining_goal = 0
     
     for item in portfolio:
         dividends = CompaniesDividend.objects.filter(ticker=item.ticker.ticker, date_of_dividend__year=current_year)
@@ -157,12 +160,11 @@ def dividends(request):
         dividend_yield += (total_dividend_value / item.average_purchase_price) * 100
         number_of_dividends += 1
 
-    dividend_yield /= number_of_dividends
-    total_monthly_dividends = round(total_annual_dividends / 12,2)
-    total_daily_dividends = round(total_annual_dividends / 365,2)
-    percentage_accomplished = (total_monthly_dividends / monthly_goal) * 100 if monthly_goal > 0 else 0
-    remaining_percentage = 100 - percentage_accomplished
-    remaining_goal = monthly_goal - total_monthly_dividends
+    if number_of_dividends > 0:
+        dividend_yield /= number_of_dividends
+        total_monthly_dividends = round(total_annual_dividends / 12,2)
+        total_daily_dividends = round(total_annual_dividends / 365,2)
+        remaining_goal = monthly_goal - total_monthly_dividends
 
     context = {
         'dividend_table_data': dividend_table_data,
@@ -171,8 +173,6 @@ def dividends(request):
         'total_daily_dividends': total_daily_dividends,
         'dividend_yield': round(dividend_yield,2),
         'dividend_goal': monthly_goal,
-        'percentage_accomplished': percentage_accomplished,
-        'remaining_percentage': remaining_percentage,
         'remaining_goal': remaining_goal,
     }
     
@@ -295,6 +295,7 @@ def input_investment(request):
 @login_required
 def simulate_dividend_results(request):
     monthly_investment = request.session.get('monthly_investment')
+    MAX_YEARS = 100
     
     if not monthly_investment:
         return redirect('input_investment')
@@ -344,7 +345,8 @@ def simulate_dividend_results(request):
     years = 0
     future_monthly_dividends = float(total_monthly_dividends)
     
-    while future_monthly_dividends < goal:
+    
+    while future_monthly_dividends < goal and years < MAX_YEARS:
         years += 1
         portfolio_value += float(monthly_investment) * 12 
         future_annual_dividends = float(portfolio_value) * (float(dividend_yield)/100)
