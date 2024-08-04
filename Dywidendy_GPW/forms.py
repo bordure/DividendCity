@@ -13,3 +13,11 @@ class DividendGoalForm(forms.ModelForm):
         widgets = {
             'monthly_dividend_goal': forms.NumberInput(attrs={'class': 'form-control form-control-dark'}),
         }
+
+class InvestmentForm(forms.Form):
+    monthly_investment = forms.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        label='Monthly Investment (PLN)',
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter amount in PLN'})
+    )

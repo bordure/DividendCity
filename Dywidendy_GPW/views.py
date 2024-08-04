@@ -7,7 +7,7 @@ from django.db.models import Sum
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import CompaniesName, CompaniesPrice, UserPortfolio, CompaniesDividend, UserProfile
-from .forms import EditStockForm, DividendGoalForm
+from .forms import EditStockForm, DividendGoalForm, InvestmentForm
 from datetime import datetime
 from datetime import timedelta, date    
 
@@ -278,3 +278,94 @@ def set_dividend_goal(request):
     else:
         form = DividendGoalForm(instance=profile)
     return render(request, 'set_dividend_goal.html', {'form': form})
+
+@login_required
+def input_investment(request):
+    if request.method == 'POST':
+        form = InvestmentForm(request.POST)
+        if form.is_valid():
+            monthly_investment = float(form.cleaned_data['monthly_investment'])
+            request.session['monthly_investment'] = monthly_investment
+            return redirect('simulate_dividend_results')
+    else:
+        form = InvestmentForm()
+    
+    return render(request, 'input_investment.html', {'form': form})
+
+@login_required
+def simulate_dividend_results(request):
+    monthly_investment = request.session.get('monthly_investment')
+    
+    if not monthly_investment:
+        return redirect('input_investment')
+
+    monthly_investment = float(monthly_investment) 
+
+    current_year = datetime.now().year
+    portfolio = UserPortfolio.objects.filter(user=request.user).select_related('ticker')
+    profile = UserProfile.objects.get(user=request.user)
+    monthly_goal = profile.monthly_dividend_goal
+
+
+    total_annual_dividends = 0
+    dividend_yield = 0
+    number_of_dividends = 0
+
+    for item in portfolio:
+        dividends = CompaniesDividend.objects.filter(ticker=item.ticker.ticker, date_of_dividend__year=current_year)
+        total_dividend_value = dividends.aggregate(total=Sum('value_of_dividend'))['total'] or 0
+        dividend_value_per_stock = item.quantity * total_dividend_value
+
+        if total_dividend_value == 0:
+            continue
+
+        total_annual_dividends += dividend_value_per_stock
+        dividend_yield += (total_dividend_value / item.average_purchase_price) * 100
+        number_of_dividends += 1
+
+    if number_of_dividends > 0:
+        dividend_yield /= number_of_dividends
+
+    total_monthly_dividends = round(total_annual_dividends / 12, 2)
+    
+    dividend_yield = float(dividend_yield)
+    goal = float(monthly_goal)
+
+    portfolio_value = 0
+    for item in portfolio:
+        try:
+            current_price_obj = CompaniesPrice.objects.get(ticker=item.ticker.ticker)
+            current_price = float(current_price_obj.price)
+            portfolio_value += item.quantity * current_price
+        except CompaniesPrice.DoesNotExist:
+            continue 
+
+    results = []
+    years = 0
+    future_monthly_dividends = float(total_monthly_dividends)
+    
+    while future_monthly_dividends < goal:
+        years += 1
+        portfolio_value += float(monthly_investment) * 12 
+        future_annual_dividends = float(portfolio_value) * (float(dividend_yield)/100)
+        portfolio_value += float(future_annual_dividends)  
+        future_monthly_dividends = round(future_annual_dividends / 12, 2)  
+
+        results.append({
+            'year': years,
+            'portfolio_value': round(portfolio_value, 2),
+            'monthly_dividends': future_monthly_dividends
+        })
+
+    context = {
+        'results': results,
+        'years_to_reach_goal': years,
+        'goal': goal,
+        'dividend_yield': round(dividend_yield, 2),
+        'total_monthly_dividends': total_monthly_dividends,
+        'monthly_investment': monthly_investment
+    }
+
+    request.session.pop('monthly_investment', None)
+
+    return render(request, 'simulate_dividend_results.html', context)

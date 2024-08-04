@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% block head %}
+{{ block.super }}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulate Dividend Goal</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #f8f9fa;
+            padding: 20px;
+        }
+        .table-custom {
+            background-color: #212529; 
+            color: #f8f9fa; 
+            border: 1px solid #454d55; 
+        }
+        .table-custom th,
+        .table-custom td {
+            border: 1px solid #454d55;
+        }
+        .table-custom thead {
+            background-color: #343a40; 
+        }
+        .card-text {
+            text-align: center; 
+            font-size: 24px; 
+        }
+    </style>
+{% endblock head %}
+</head>
+<body>
+{% block content %}
+    <div class="container">
+        <h2>Dividend Goal Simulation Results</h2>
+
+        <div class="card mb-3">
+            <div class="card-body bg-dark">
+                <p class="card-text">Monthly Investment: {{ monthly_investment }} zł</p>
+                <p class="card-text">Current Dividend Yield: {{ dividend_yield }}%</p>
+                <p class="card-text">Current Monthly Dividends: {{ total_monthly_dividends }} zł</p>
+                <p class="card-text">Monthly Dividend Goal: {{ goal }} zł</p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-custom table-striped">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Portfolio Value (PLN)</th>
+                        <th>Monthly Dividends (PLN)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result.year }}</td>
+                        <td>{{ result.portfolio_value }} zł</td>
+                        <td>{{ result.monthly_dividends }} zł</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a href="{% url 'portfolio' %}" class="btn btn-primary">Back to Portfolio</a>
+        <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
+    </div>
+{% endblock content %}
+</body>
+</html>
