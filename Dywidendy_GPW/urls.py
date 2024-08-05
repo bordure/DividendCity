@@ -17,5 +17,6 @@ urlpatterns = [
     path('set_dividend_goal/', views.set_dividend_goal, name='set_dividend_goal'),
     path('simulate_dividend_results/', views.simulate_dividend_results, name='simulate_dividend_results'),
     path('input_investment/', views.input_investment, name='input_investment'),
+    path('search/', views.search_companies, name='search'),
     path('', views.main_page, name='main_page'),
 ]

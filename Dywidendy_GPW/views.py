@@ -3,13 +3,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.db.models import Sum
+from django.db.models import Sum, Max, Count, OuterRef, Subquery, Q, F, FloatField, ExpressionWrapper
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import CompaniesName, CompaniesPrice, UserPortfolio, CompaniesDividend, UserProfile
 from .forms import EditStockForm, DividendGoalForm, InvestmentForm
 from datetime import datetime
-from datetime import timedelta, date    
+from datetime import timedelta, date  
+from django.db.models.functions import ExtractYear  
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -371,3 +373,46 @@ def simulate_dividend_results(request):
     request.session.pop('monthly_investment', None)
 
     return render(request, 'simulate_dividend_results.html', context)
+
+@login_required
+def search_companies(request):
+    if request.method == 'POST':
+        min_years = int(request.POST.get('min_years', 0))
+        sort_by_price = request.POST.get('sort_by_price') == 'on'
+        sort_by_dividend = request.POST.get('sort_by_dividend') == 'on'
+        consecutive_growing_years = request.POST.get('consecutive_growing_years') == 'on'
+
+        filter_criteria = Q(dividend_consecutive_years__gte=min_years)
+        if consecutive_growing_years:
+            filter_criteria &= Q(dividend_growing_consecutive_years__gte=min_years)
+
+        latest_dividend_subquery = CompaniesDividend.objects.filter(
+            ticker=OuterRef('ticker')
+        ).order_by('-date_of_dividend').values('value_of_dividend')[:1]
+
+        companies = CompaniesPrice.objects.filter(filter_criteria).annotate(
+            latest_dividend_price=Subquery(latest_dividend_subquery),
+            company_name=Subquery(CompaniesName.objects.filter(
+                ticker=OuterRef('ticker')
+            ).values('name')[:1]),
+            dividend_yield=ExpressionWrapper(
+                (F('latest_dividend_price') / F('price')) * 100,
+                output_field=FloatField()
+            )
+        )
+
+        if sort_by_price:
+            companies = companies.order_by('-price')
+        elif sort_by_dividend:
+            companies = companies.order_by('-dividend_yield')
+            
+        for company in companies:
+            company.dividend_yield = round(company.dividend_yield, 2)
+
+        context = {
+            'companies': companies,
+        }
+
+        return render(request, 'search_results.html', context)
+    
+    return render(request, 'search.html')

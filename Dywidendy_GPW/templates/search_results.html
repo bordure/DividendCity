@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% block head %}
+{{ block.super }}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #f8f9fa;
+            padding: 20px;
+        }
+        .card-custom {
+            background-color: #1b3b5f;
+            color: #f8f9fa;
+            border: 1px solid #454d55;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .card-custom h5 {
+            margin-bottom: 0;
+        }
+        .card-wrapper {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+    </style>
+{% endblock head %}
+</head>
+<body>
+{% block content %}
+    <div class="container">
+        <h2>Search Results</h2>
+        <div class="container-custom">
+            {% for company in companies %}
+            <div class="card-wrapper">
+                <div class="card-custom">
+                    <h5><a href="{% url 'company_info' company.ticker %}" class="text-light">{{ company.ticker }} - {{ company.company_name }}</a></h5>
+                    <p>Price: {{ company.price }} zł</p>
+                    <p>Dividend Price: {{ company.latest_dividend_price }} zł</p>
+                    <p>Dividend Yield: {{ company.dividend_yield }}%</p>
+                    <p>Consecutive Years of Dividend: {{ company.dividend_consecutive_years }}</p>
+                    <p>Growing Consecutive Years of Dividend: {{ company.dividend_growing_consecutive_years }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="card-custom">
+                <p>No companies match your criteria.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'search' %}" class="btn btn-primary">Back to Search</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock content %}
+</body>
+</html>

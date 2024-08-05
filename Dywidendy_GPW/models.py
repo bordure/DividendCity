@@ -3,13 +3,15 @@ from django.contrib.auth.models import User
 
 class CompaniesPrice(models.Model):
     ticker = models.CharField(max_length=255, primary_key=True)
-    price = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    dividend_consecutive_years = models.IntegerField(default=0)
+    dividend_growing_consecutive_years = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'companies_price'
 
     def __str__(self):
-        return f"{self.ticker}: {self.price}"
+        return f"{self.ticker} {self.price} {self.dividend_consecutive_years} {self.dividend_growing_consecutive_years}"
 
 class CompaniesName(models.Model):
     ticker = models.CharField(max_length=255, primary_key=True)

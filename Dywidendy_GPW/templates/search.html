@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% block head %}
+{{ block.super }}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Companies</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom dark mode styles */
+        body {
+            background-color: #343a40;
+            color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            background-color: #1b3b5f;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .form-check-input:checked {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .form-check-label {
+            color: #f8f9fa;
+        }
+    </style>
+{% endblock head %}
+</head>
+<body>
+{% block content %}
+    <div class="container">
+        <h2>Search Companies</h2>
+        <form method="post" action="{% url 'search' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="min_years">Minimum Consecutive Years of Dividends:</label>
+                <input type="number" class="form-control" id="min_years" name="min_years" min="0">
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="consecutive_growing_years" name="consecutive_growing_years">
+                <label class="form-check-label" for="consecutive_growing_years">Consecutive Growing Years</label>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="sort_by_price" name="sort_by_price">
+                <label class="form-check-label" for="sort_by_price">Sort by Price</label>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="sort_by_dividend" name="sort_by_dividend">
+                <label class="form-check-label" for="sort_by_dividend">Sort by Dividend Value</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{% url 'portfolio' %}" class="btn btn-secondary">Back to Portfolio</a>
+        </form>
+    </div>
+{% endblock content %}
+</body>
+</html>
