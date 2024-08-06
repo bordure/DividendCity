@@ -10,11 +10,11 @@ load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+APP_NAME = os.environ.get("FLY_APP_NAME")
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', f'{APP_NAME}.fly.dev']
+CSRF_TRUSTED_ORIGINS = [f'https://{APP_NAME}.fly.dev']
 
 # Application definition
 
@@ -36,6 +36,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = "Dywidendy_GPW.urls"
@@ -101,6 +102,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [BASE_DIR / "Dywidendy_GPW/static"]
 
 # Default primary key field type
