@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from Dywidendy_GPW.models import UserProfile
 from Dywidendy_GPW.signals import create_user_profile, save_user_profile
 from django.db.models.signals import post_save
@@ -28,3 +29,10 @@ class UserProfileModelTests(TestCase):
     
     def test_monthly_dividend_goal_field(self):
         self.assertEqual(self.user_profile.monthly_dividend_goal, 500.00)
+    
+    def test_negative_dividend_goal(self):
+        user_profile = UserProfile(user=self.user)
+        user_profile.monthly_dividend_goal = -100.00
+        
+        with self.assertRaises(ValidationError):
+            user_profile.full_clean()
