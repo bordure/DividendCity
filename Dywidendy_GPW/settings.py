@@ -64,12 +64,6 @@ DATABASES = {
     'default': dj_database_url.parse(os.environ.get('CONNECTION_STRING'))
 }
 
-if os.getenv('DJANGO_TEST_ENV') == 'true':
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',  # Use in-memory database for tests
-    }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
