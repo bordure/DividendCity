@@ -18,7 +18,8 @@ jobs:
           CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
   deploy:
-    name: Deploy app
+    name: Deploy django app
+    needs: test
     runs-on: ubuntu-latest
     concurrency: deploy-group    
     steps:
