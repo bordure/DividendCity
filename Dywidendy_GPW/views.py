@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from django.db.models import Sum, Max, Count, OuterRef, Subquery, Q, F, FloatField, ExpressionWrapper
 from django.http import JsonResponse
 from django.contrib import messages
-from .models import CompaniesName, CompaniesPrice, UserPortfolio, CompaniesDividend, UserProfile
-from .forms import EditStockForm, DividendGoalForm, InvestmentForm
+from .models import CompaniesName, CompaniesPrice, CompaniesDividend, UserProfile, UserPortfolio
+from .forms import DividendGoalForm, InvestmentForm, AddStockForm, EditStockForm
 from datetime import datetime
 from datetime import timedelta, date  
 from django.db.models.functions import ExtractYear  
@@ -47,29 +47,23 @@ def portfolio(request):
     
     for stock in portfolio:
         try:
-            # Fetch current price from CompaniesPrice
             current_price_obj = CompaniesPrice.objects.get(ticker=stock.ticker.ticker)
             stock.current_price = float(current_price_obj.price)
             
-            # Calculate current value
             stock.current_value = round(stock.quantity * stock.current_price,2)
             
-            # Calculate profit
             stock.profit = float(stock.current_value) - (float(stock.average_purchase_price) * float(stock.quantity))
             stock.profit = round(stock.profit, 2)
 
-            #calculate total holdings value
             total_holdings_value += float(stock.quantity) * float(stock.current_price)
             total_purchase_price += float(stock.quantity) * float(stock.average_purchase_price)
 
-            # Calculate percentage
             if stock.average_purchase_price != 0:
                 stock.percentage = (float(stock.profit) / (float(stock.average_purchase_price) * float(stock.quantity))) * 100
             else:
                 stock.percentage = 0
             stock.percentage = round(stock.percentage,2)
                 
-            # Determine profit/loss color
             if stock.profit >= 0:
                 stock.profit_color = 'green'
             else:
@@ -80,7 +74,7 @@ def portfolio(request):
             stock.current_value = 0.0
             stock.profit = 0.0
             stock.percentage = 0.0
-            stock.profit_color = 'black'  # Handle missing price
+            stock.profit_color = 'black'  
 
         total_profit_percentage = (total_holdings_value - total_purchase_price) / total_purchase_price * 100
         total_profit_pln = total_holdings_value - total_purchase_price
@@ -97,25 +91,35 @@ def portfolio(request):
 @login_required
 def add_stock(request):
     if request.method == 'POST':
-        ticker = request.POST['ticker']
-        quantity = int(request.POST['quantity'])
-        average_purchase_price = float(request.POST['average_purchase_price'])
-        company = CompaniesName.objects.get(ticker=ticker)
-        portfolio_item, created = UserPortfolio.objects.get_or_create(
-            user=request.user, ticker=company,
-            defaults={'quantity': quantity, 'average_purchase_price': average_purchase_price}
-        )
-        if not created:
-            portfolio_item.quantity += quantity
-            portfolio_item.average_purchase_price = (
-                (portfolio_item.average_purchase_price * portfolio_item.quantity + average_purchase_price * quantity)
-                / (portfolio_item.quantity + quantity)
-            )
-            portfolio_item.save()
-        return redirect('portfolio')
+        form = AddStockForm(request.POST, user=request.user)
+        if form.is_valid():
+            try:
+                ticker = str(form.cleaned_data['ticker']).split(':')[0]
+                company = CompaniesName.objects.get(ticker=ticker)
+                portfolio_item = form.save(commit=False)
+                portfolio_item.ticker = company
+                portfolio_item.user = request.user
+                
+                existing_item = UserPortfolio.objects.filter(user=request.user, ticker=company).first()
+                if existing_item:
+                    existing_item.quantity += portfolio_item.quantity
+                    existing_item.average_purchase_price = (
+                        (existing_item.average_purchase_price * existing_item.quantity + portfolio_item.average_purchase_price * portfolio_item.quantity)
+                        / (existing_item.quantity + portfolio_item.quantity)
+                    )
+                    existing_item.save()
+                else:
+                    portfolio_item.save()
+                
+                return redirect('portfolio')
+            except CompaniesName.DoesNotExist:
+                form.add_error('ticker', 'Company with this ticker does not exist.')
     else:
-        companies = CompaniesName.objects.all()
-        return render(request, 'add_stock.html', {'companies': companies})
+        form = AddStockForm(user=request.user)
+
+    companies = CompaniesName.objects.all()
+    return render(request, 'add_stock.html', {'form': form, 'companies': companies})
+
 
 def autocomplete_companies(request):
     term = request.GET.get('term')
@@ -157,7 +161,6 @@ def dividends(request):
         })
         
         
-        # Accumulate total annual dividends
         total_annual_dividends += dividend_value_per_stock
         dividend_yield += (total_dividend_value / item.average_purchase_price) * 100
         number_of_dividends += 1
@@ -185,12 +188,9 @@ def company_info(request, ticker):
     company = get_object_or_404(CompaniesName, ticker=ticker)
     dividends = CompaniesDividend.objects.filter(ticker=ticker).order_by('-date_of_dividend')
     
-    # Prepare data for the chart
     dividend_dates = [div.date_of_dividend.strftime('%Y-%m-%d') for div in dividends][::-1]
     dividend_values = [float(div.value_of_dividend) for div in dividends][::-1]
-    print(dividend_dates, dividend_values)
     
-    # Check if the company is in the user's portfolio
     try:
         portfolio_stock = UserPortfolio.objects.get(user=request.user, ticker__ticker=ticker)
         in_portfolio = True

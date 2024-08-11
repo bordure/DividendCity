@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from Dywidendy_GPW.models import UserPortfolio, CompaniesName
+from django.core.exceptions import ValidationError
 
 class UserPortfolioModelTests(TestCase):
 
@@ -46,3 +47,33 @@ class UserPortfolioModelTests(TestCase):
     
     def test_average_purchase_price_field(self):
         self.assertEqual(self.user_portfolio.average_purchase_price, 100.00)
+    
+    def test_negative_quantity_raises_validation_error(self):
+        with self.assertRaises(ValidationError) as cm:
+            UserPortfolio.objects.create(
+                user=self.user,
+                ticker=self.company_name,
+                quantity=-5,
+                average_purchase_price=100.00
+            )
+        self.assertIn('Quantity cannot be negative', cm.exception.messages)
+
+    def test_negative_average_purchase_price_raises_validation_error(self):
+        with self.assertRaises(ValidationError) as cm:
+            UserPortfolio.objects.create(
+                user=self.user,
+                ticker=self.company_name,
+                quantity=10,
+                average_purchase_price=-100.00  
+            )
+        self.assertIn('Average purchase price cannot be negative', cm.exception.messages)
+    
+    def test_negative_quantity_and_price_raises_validation_error(self):
+        with self.assertRaises(ValidationError) as cm:
+            UserPortfolio.objects.create(
+                user=self.user,
+                ticker=self.company_name,
+                quantity=-5,
+                average_purchase_price=-100.00
+            )
+        self.assertIn('Quantity and average purchase price cannot be negative.', cm.exception.messages)

@@ -47,6 +47,18 @@ class UserPortfolio(models.Model):
     class Meta:
         unique_together = ('user', 'ticker')
 
+    def clean(self):
+        if self.quantity < 0 and self.average_purchase_price < 0:
+            raise ValidationError('Quantity and average purchase price cannot be negative.')
+        if self.quantity < 0:
+            raise ValidationError('Quantity cannot be negative')
+        if self.average_purchase_price < 0:
+            raise ValidationError('Average purchase price cannot be negative')
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.user.username} - {self.ticker.ticker}: {self.quantity} shares at {self.average_purchase_price}"
 
