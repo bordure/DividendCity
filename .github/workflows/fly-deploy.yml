@@ -1,11 +1,19 @@
-# See https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
-
-name: Fly Deploy
+name: Ci cd pipeline
 on:
   push:
     branches:
       - main
 jobs:
+  test:
+    name: Test django app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: pip install -r requirements.txt
+      - run: python manage.py test 
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
