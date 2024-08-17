@@ -50,7 +50,7 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="min_years">Minimum Consecutive Years of Dividends:</label>
-                <input type="number" class="form-control" id="min_years" name="min_years" min="0">
+                <input type="number" class="form-control" id="min_years" name="min_years" min="0" value="0">
             </div>
             <div class="form-group form-check">
                 <input type="checkbox" class="form-check-input" id="consecutive_growing_years" name="consecutive_growing_years">
@@ -62,7 +62,7 @@
             </div>
             <div class="form-group form-check">
                 <input type="checkbox" class="form-check-input" id="sort_by_dividend" name="sort_by_dividend">
-                <label class="form-check-label" for="sort_by_dividend">Sort by Dividend Value</label>
+                <label class="form-check-label" for="sort_by_dividend">Sort by Dividend per stock value</label>
             </div>
             <button type="submit" class="btn btn-primary">Search</button>
             <a href="{% url 'portfolio' %}" class="btn btn-secondary">Back to Portfolio</a>

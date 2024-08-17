@@ -377,7 +377,9 @@ def simulate_dividend_results(request):
 @login_required
 def search_companies(request):
     if request.method == 'POST':
-        min_years = int(request.POST.get('min_years', 0))
+        min_years = request.POST.get('min_years', 0)
+        if min_years == '':
+            min_years = 0
         sort_by_price = request.POST.get('sort_by_price') == 'on'
         sort_by_dividend = request.POST.get('sort_by_dividend') == 'on'
         consecutive_growing_years = request.POST.get('consecutive_growing_years') == 'on'
@@ -407,7 +409,11 @@ def search_companies(request):
             companies = companies.order_by('-dividend_yield')
             
         for company in companies:
-            company.dividend_yield = round(company.dividend_yield, 2)
+            if company.dividend_yield is not None:
+                company.dividend_yield = round(company.dividend_yield, 2)
+            else:
+                company.dividend_yield = 0
+                company.latest_dividend_price = 0
 
         context = {
             'companies': companies,

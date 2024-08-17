@@ -43,7 +43,7 @@
                 <div class="card-custom">
                     <h5><a href="{% url 'company_info' company.ticker %}" class="text-light">{{ company.ticker }} - {{ company.company_name }}</a></h5>
                     <p>Price: {{ company.price }} zł</p>
-                    <p>Dividend Price: {{ company.latest_dividend_price }} zł</p>
+                    <p>Dividend per stock value: {{ company.latest_dividend_price }} zł</p>
                     <p>Dividend Yield: {{ company.dividend_yield }}%</p>
                     <p>Consecutive Years of Dividend: {{ company.dividend_consecutive_years }}</p>
                     <p>Growing Consecutive Years of Dividend: {{ company.dividend_growing_consecutive_years }}</p>
