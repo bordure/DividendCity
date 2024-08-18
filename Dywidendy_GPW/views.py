@@ -170,6 +170,8 @@ def dividends(request):
         total_monthly_dividends = round(total_annual_dividends / 12,2)
         total_daily_dividends = round(total_annual_dividends / 365,2)
         remaining_goal = monthly_goal - total_monthly_dividends
+        if remaining_goal <= 0:
+            remaining_goal = 0
 
     context = {
         'dividend_table_data': dividend_table_data,

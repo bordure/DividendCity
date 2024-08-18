@@ -93,7 +93,7 @@
                 <div class="canvas-container">
                     <canvas id="goalChart"></canvas>
                 </div>
-                <p class="card-text">Goal: {{ dividend_goal }} zł</p>
+                <p class="card-text">Goal: {{ dividend_goal }} zł monthly</p>
             </div>
         </div>
 
@@ -114,7 +114,7 @@
 
             const accomplished = convertToFloat("{{ total_monthly_dividends }}");
             const goal = convertToFloat("{{ dividend_goal }}");
-            const remaining = goal - accomplished;
+            const remaining = convertToFloat("{{ remaining_goal }}");
 
             const ctx = document.getElementById('goalChart').getContext('2d');
             const goalData = {
