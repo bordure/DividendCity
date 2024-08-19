@@ -7,98 +7,211 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Custom dark mode styles */
         body {
-            background-color: #343a40;
-            color: #f8f9fa; /* Light text color */
+            background: linear-gradient(135deg, #050d21, #1a2e4a);
+            color: #f8f9fa;
+            padding: 20px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            letter-spacing: 1.5px;
+        }
+
+        .portfolio-summary {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .portfolio-summary p {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .navbar-custom {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+        }
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #f8f9fa;
+            font-size: 1rem;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: #17a2b8;
+        }
+
+        .card-custom {
+            background-color: rgba(33, 37, 41, 0.9);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            color: #f8f9fa;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-body-custom {
             padding: 20px;
         }
-        .table-custom {
-            background-color: #212529; /* Darker table background */
-            color: #f8f9fa; /* Light text color */
-            border: 1px solid #454d55; /* Darker border */
+
+        .stock-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .table-custom th,
-        .table-custom td {
-            border: 1px solid #454d55; /* Darker border */
+
+        .stock-header a {
+            color: #f8f9fa;
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
-        .table-custom thead {
-            background-color: #343a40; /* Darker header background */
+
+        .stock-header a:hover {
+            color: #17a2b8;
         }
-        .table-custom .profit-green {
-            color: #28a745; /* Green profit text */
+
+        .badge-custom {
+            font-size: 1rem;
+            padding: 5px 10px;
+            border-radius: 10px;
         }
-        .table-custom .loss-red {
-            color: #dc3545; /* Red loss text */
+
+        .badge-profit {
+            background-color: #28a745;
         }
-        .wider-cell {
-            width: 130px;
+
+        .badge-loss {
+            background-color: #dc3545;
         }
-        .card-text{
-            font-size: 30px;
+
+        .list-group-custom {
+            background-color: transparent;
+            border: none;
         }
-        .profit-green-card{
-            color:#28a745;
+
+        .list-group-item-custom {
+            background-color: #343a40;
+            border: none;
+            color: #f8f9fa;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
-        .loss-red-card{
-            color:#dc3545;
+
+        .list-group-item-custom:hover {
+            background-color: #495057;
+            transform: translateY(-2px);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .stock-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+
+            .portfolio-summary p {
+                font-size: 1.2rem;
+            }
+
+            .navbar-custom .navbar-brand,
+            .navbar-custom .nav-link {
+                font-size: 0.9rem;
+            }
         }
     </style>
-        {% endblock head %}
+    {% endblock head %}
 </head>
 <body>
     {% block content %}
-    <div class="container">
-        <h2>Portfolio</h2>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'add_stock' %}">Add Stock</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dividends' %}">Show Dividends</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'search' %}">Search Company</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-        <div class="card mb-3">
-            <div class="card-body bg-dark">
-                <p class="{% if total_profit_pln >= 0 %}profit-green-card card-text{% else %}loss-red-card card-text{% endif %}">Total portfolio value: {{ total_holdings_value }}zł</p>
-                <p class="{% if total_profit_pln >= 0 %}profit-green-card card-text{% else %}loss-red-card card-text{% endif %}">Profit (%): {{ total_profit_percentage }}%</p>
-                <p class="{% if total_profit_pln >= 0 %}profit-green-card card-text{% else %}loss-red-card card-text{% endif %}">Profit (PLN): {{ total_profit_pln }} </p>
+    <div class="container">
+        <div class="portfolio-summary">
+            <p>Total Portfolio Value: <span class="{% if total_profit_pln >= 0 %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">{{ total_holdings_value }} zł</span></p>
+            <p>Profit (%): <span class="{% if total_profit_pln >= 0 %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">{{ total_profit_percentage }}%</span></p>
+            <p>Profit (PLN): <span class="{% if total_profit_pln >= 0 %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">{{ total_profit_pln }} zł</span></p>
+        </div>
+
+        <div class="grid-container">
+            {% for stock in portfolio %}
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <div class="stock-header">
+                        <a href="{% url 'company_info' stock.ticker.ticker %}">{{ stock.ticker.ticker }}</a>
+                        <span class="badge {% if stock.profit_color == 'green' %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">
+                            {{ stock.profit }} zł
+                        </span>
+                    </div>
+                    <p>{{ stock.ticker.name }}</p>
+
+                    <div class="list-group list-group-custom">
+                        <div class="list-group-item list-group-item-custom">
+                            <strong>Quantity:</strong> {{ stock.quantity }}
+                        </div>
+                        <div class="list-group-item list-group-item-custom">
+                            <strong>Avg. Purchase Price:</strong> {{ stock.average_purchase_price }} zł
+                        </div>
+                        <div class="list-group-item list-group-item-custom">
+                            <strong>Current Price:</strong> {{ stock.current_price }} zł
+                        </div>
+                        <div class="list-group-item list-group-item-custom">
+                            <strong>Value:</strong> {{ stock.current_value }} zł
+                        </div>
+                        <div class="list-group-item list-group-item-custom">
+                            <strong>Profit Percentage:</strong> {{ stock.percentage }}%
+                        </div>
+                    </div>
+                </div>
             </div>
+            {% endfor %}
         </div>
-        
-        <div class="table-responsive">
-            <table class="table table-custom table-striped">
-                <thead>
-                    <tr>
-                        <th>Stock Name</th>
-                        <th>Ticker</th>
-                        <th>Quantity</th>
-                        <th>Average Purchase Price (PLN)</th>
-                        <th>Current Price (PLN)</th>
-                        <th>Current Value (PLN)</th>
-                        <th class="wider-cell">Profit (PLN)</th>
-                        <th>Profit Percentage (%)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for stock in portfolio %}
-                    <tr>
-                        <td><a href="{% url 'company_info' stock.ticker.ticker %}" class="text-light">{{ stock.ticker.name }}</a></td>
-                        <td>{{ stock.ticker.ticker }}</td>
-                        <td>{{ stock.quantity }}</td>
-                        <td>{{ stock.average_purchase_price }} zł</td>
-                        <td>{{ stock.current_price }} zł</td>
-                        <td>{{ stock.current_value }} zł</td>
-                        <td class="{% if stock.profit >= 0 %}profit-green{% else %}loss-red{% endif %}">{{ stock.profit }} zł</td>
-                        <td class="{% if stock.profit >= 0 %}profit-green{% else %}loss-red{% endif %}">{{ stock.percentage }}%</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <a href="{% url 'add_stock' %}" class="btn btn-primary">Add Stock</a>
-        <a href="{% url 'dividends' %}" class="btn btn-primary">Show dividends</a>
-        <a href="{% url 'search' %}" class="btn btn-primary">Search for a company</a>
-        <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
     </div>
 
-    <!-- Bootstrap JS and dependencies (optional for certain features) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -68,6 +68,8 @@ def portfolio(request):
                 stock.profit_color = 'green'
             else:
                 stock.profit_color = 'red'
+            
+            stock.profit = format(stock.profit, '.2f')
         
         except CompaniesPrice.DoesNotExist:
             stock.current_price = 0.0
