@@ -3,61 +3,140 @@
 <html lang="en">
 <head>
 {% block head %}
-{{ block.super }}
+    {{ block.super }}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #343a40;
+            background: linear-gradient(135deg, #050d21, #1a2e4a);
             color: #f8f9fa;
             padding: 20px;
+            font-family: 'Roboto', sans-serif;
         }
+
+        .navbar-custom {
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+        }
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #f8f9fa;
+            font-size: 1rem;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: #17a2b8;
+        }
+
         .card-custom {
-            background-color: #1b3b5f;
+            background-color: rgba(33, 37, 41, 0.9);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
             color: #f8f9fa;
-            border: 1px solid #454d55;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-body-custom {
             padding: 20px;
-            border-radius: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        .card-custom h5 {
-            margin-bottom: 0;
-        }
+
         .card-wrapper {
             width: 100%;
             margin-bottom: 15px;
+        }
+
+        .stock-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stock-header a {
+            color: #f8f9fa;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .stock-header a:hover {
+            color: #17a2b8;
+        }
+
+        .btn-primary {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #138496;
+            border-color: #117a8b;
         }
     </style>
 {% endblock head %}
 </head>
 <body>
 {% block content %}
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="collapse navbar-collapse show" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'portfolio' %}">Back to Portfolio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'search' %}">Back to Search</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <div class="container">
         <h2>Search Results</h2>
-        <div class="container-custom">
+
+        <div class="grid-container">
             {% for company in companies %}
             <div class="card-wrapper">
                 <div class="card-custom">
-                    <h5><a href="{% url 'company_info' company.ticker %}" class="text-light">{{ company.ticker }} - {{ company.company_name }}</a></h5>
-                    <p>Price: {{ company.price }} zł</p>
-                    <p>Dividend per stock value: {{ company.latest_dividend_price }} zł</p>
-                    <p>Dividend Yield: {{ company.dividend_yield }}%</p>
-                    <p>Consecutive Years of Dividend: {{ company.dividend_consecutive_years }}</p>
-                    <p>Growing Consecutive Years of Dividend: {{ company.dividend_growing_consecutive_years }}</p>
+                    <div class="card-body-custom">
+                        <div class="stock-header">
+                            <a href="{% url 'company_info' company.ticker %}">{{ company.ticker }} - {{ company.company_name }}</a>
+                        </div>
+                        <p>Price: {{ company.price }} zł</p>
+                        <p>Dividend per Stock Value: {{ company.latest_dividend_price }} zł</p>
+                        <p>Dividend Yield: {{ company.dividend_yield }}%</p>
+                        <p>Consecutive Years of Dividend: {{ company.dividend_consecutive_years }}</p>
+                        <p>Growing Consecutive Years of Dividend: {{ company.dividend_growing_consecutive_years }}</p>
+                    </div>
                 </div>
             </div>
             {% empty %}
             <div class="card-custom">
-                <p>No companies match your criteria.</p>
+                <div class="card-body-custom">
+                    <p>No companies match your criteria.</p>
+                </div>
             </div>
             {% endfor %}
         </div>
-        <a href="{% url 'search' %}" class="btn btn-primary">Back to Search</a>
+
     </div>
 
+    <!-- Bootstrap and jQuery Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
