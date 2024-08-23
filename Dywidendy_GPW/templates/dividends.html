@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 {% block head %}
-{{ block.super }}
+    {{ block.super }}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dividends</title>
@@ -11,9 +11,107 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #343a40;
+            background: linear-gradient(135deg, #050d21, #1a2e4a);
             color: #f8f9fa;
             padding: 20px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            letter-spacing: 1.5px;
+        }
+
+        .navbar-custom {
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+        }
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #f8f9fa;
+            font-size: 1rem;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: #17a2b8;
+        }
+
+        .card-custom {
+            background-color: rgba(33, 37, 41, 0.9);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            color: #f8f9fa;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .list-group-item-custom {
+            background-color: #343a40;
+            border: none;
+            color: #f8f9fa;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .list-group-item-custom:hover {
+            background-color: #495057;
+            transform: translateY(-2px);
+        }
+
+        .card-body-custom {
+            padding: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .stock-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stock-header a {
+            color: #f8f9fa;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .stock-header a:hover {
+            color: #17a2b8;
+        }
+
+        .badge-custom {
+            font-size: 1rem;
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+
+        .badge-profit {
+            background-color: #28a745;
+        }
+
+        .badge-loss {
+            background-color: #dc3545;
         }
         .canvas-container {
             width: 50%;
@@ -23,85 +121,82 @@
             justify-content: center;
             align-items: center;
         }
-        .table-custom {
-            background-color: #212529; 
-            color: #f8f9fa; 
-            border: 1px solid #454d55; 
-        }
-        .table-custom th,
-        .table-custom td {
-            border: 1px solid #454d55;
-        }
-        .table-custom thead {
-            background-color: #343a40; 
-        }
-        .card-text {
-            text-align: center; 
-            font-size: 24px; 
-        }
-        .monthly-dividends {
-            text-align: center; 
-            font-size: 18px; 
+
+        .dividend-goal {
+            font-size: 22px; 
         }
     </style>
 {% endblock head %}
 </head>
 <body>
 {% block content %}
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="collapse navbar-collapse show" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'portfolio' %}">Back to Portfolio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dividend_calendar' %}">Show Dividends Calendar</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'set_dividend_goal' %}">Set Dividend Goal</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'simulate_dividend_results' %}">Simulate Future Dividend</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <div class="container">
         <h2>Dividends</h2>
-        
-        <div class="card mb-3">
-            <div class="card-body bg-dark">
-                <p class="card-text">Total Annual Dividends: {{ total_annual_dividends }} zł</p>
-                <p class="monthly-dividends">Monthly Dividends: {{ total_monthly_dividends }} zł</p>
-                <p class="monthly-dividends">Daily Dividends: {{ total_daily_dividends }} zł</p>
-                <p class="monthly-dividends">Yield: {{ dividend_yield }}%</p>
+
+        <div class="card-custom">
+            <div class="card-body-custom">
+                <p class="text-center"><strong>Total Annual Dividends:</strong> {{ total_annual_dividends }} zł</p>
+                <p class="text-center"><strong>Monthly Dividends:</strong> {{ total_monthly_dividends }} zł</p>
+                <p class="text-center"><strong>Daily Dividends:</strong> {{ total_daily_dividends }} zł</p>
+                <p class="text-center"><strong>Yield:</strong> {{ dividend_yield }}%</p>
             </div>
         </div>
-        
-        <!-- Dividend table -->
-        <div class="table-responsive">
-            <table class="table table-custom table-striped">
-                <thead>
-                    <tr>
-                        <th>Stock Name</th>
-                        <th>Ticker</th>
-                        <th>Quantity</th>
-                        <th>Annual Dividend Value (PLN)</th>
-                        <th>Monthly Dividend Value (PLN)</th>
-                        <th>Daily Dividend Value (PLN)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for data in dividend_table_data %}
-                    <tr>
-                        <td><a href="{% url 'company_info' data.ticker %}" class="text-light">{{ data.name }}</a></td>
-                        <td>{{ data.ticker }}</td>
-                        <td>{{ data.quantity }}</td>
-                        <td>{{ data.annual_dividend_value }} zł</td>
-                        <td>{{ data.monthly_dividend_value }} zł</td>
-                        <td>{{ data.daily_dividend_value }} zł</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
+        <div class="grid-container">
+            {% for data in dividend_table_data %}
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <div class="stock-header">
+                        <a href="{% url 'company_info' data.ticker %}">{{ data.ticker }}</a>
+                    </div>
+                    <p>{{ data.name }}</p>
+
+                    <div class="list-group list-group-custom">
+                        <div class="list-group-item list-group-item-custom">
+                            <strong>Total dividend:</strong> {{ data.total_dividend }} zł
+                        </div>
+                        <div class="list-group-item list-group-item-custom">
+                            <strong>Dividend per share:</strong> {{ data.dividend_per_share }} zł
+                        </div>
+                        <div class="list-group-item list-group-item-custom">
+                            <strong>Dividend yield:</strong> {{ data.dividend_yield }} %
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
 
-        <div class="card mb-3">
-            <div class="card-body bg-dark">
+        <div class="card-custom">
+            <div class="card-body-custom">
                 <div class="canvas-container">
                     <canvas id="goalChart"></canvas>
                 </div>
-                <p class="card-text">Goal: {{ dividend_goal }} zł monthly</p>
+                <p class="text-center dividend-goal"><strong>Goal:</strong> {{ dividend_goal }} zł monthly</p>
             </div>
         </div>
-
-        <a href="{% url 'portfolio' %}" class="btn btn-primary">Back to Portfolio</a>
-        <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
-        <a href="{% url 'dividend_calendar' %}" class="btn btn-secondary">Show dividends calendar</a>
-        <a href="{% url 'set_dividend_goal' %}" class="btn btn-secondary">Set Dividend Goal</a>
-        <a href="{% url 'simulate_dividend_results' %}" class="btn btn-secondary">Simulate future dividend</a>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -131,7 +226,7 @@
                     plugins: {
                         legend: {
                             labels: {
-                                color: '#ffffff' 
+                                color: '#ffffff'
                             }
                         }
                     }

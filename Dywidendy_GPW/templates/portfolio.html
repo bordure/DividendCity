@@ -172,9 +172,9 @@
 
     <div class="container">
         <div class="portfolio-summary">
-            <p>Total Portfolio Value: <span class="{% if total_profit_pln >= 0 %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">{{ total_holdings_value }} zł</span></p>
-            <p>Profit (%): <span class="{% if total_profit_pln >= 0 %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">{{ total_profit_percentage }}%</span></p>
-            <p>Profit (PLN): <span class="{% if total_profit_pln >= 0 %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">{{ total_profit_pln }} zł</span></p>
+            <p>Total Portfolio Value: <span class="{% if color == 'green'  %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">{{ total_holdings_value }} zł</span></p>
+            <p>Profit (%): <span class="{% if color == 'green'  %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">{{ total_profit_percentage }}%</span></p>
+            <p>Profit (PLN): <span class="{% if color == 'green'  %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">{{ total_profit_pln }} zł</span></p>
         </div>
 
         <div class="grid-container">

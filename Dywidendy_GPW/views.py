@@ -80,12 +80,17 @@ def portfolio(request):
 
         total_profit_percentage = (total_holdings_value - total_purchase_price) / total_purchase_price * 100
         total_profit_pln = total_holdings_value - total_purchase_price
+    
+    if total_profit_pln >= 0:
+        color = 'green'
+    else: color = 'red'
 
     context = {
         'portfolio': portfolio,
-        'total_holdings_value': round(total_holdings_value,2),
-        'total_profit_percentage': round(total_profit_percentage,2),
-        'total_profit_pln': round(total_profit_pln, 2),
+        'total_holdings_value': format(round(total_holdings_value,2), '.2f'),
+        'total_profit_percentage': format(round(total_profit_percentage,2), '.2f'),
+        'total_profit_pln': format(round(total_profit_pln,2), '.2f'),
+        'color': color,
         }
         
     return render(request, 'portfolio.html', context)
@@ -145,26 +150,25 @@ def dividends(request):
     
     for item in portfolio:
         dividends = CompaniesDividend.objects.filter(ticker=item.ticker.ticker, date_of_dividend__year=current_year)
-        total_dividend_value = dividends.aggregate(total=Sum('value_of_dividend'))['total'] or 0
-        monthly_dividend_value = total_dividend_value / 12
-        daily_dividend_value = total_dividend_value / 365
-        dividend_value_per_stock = item.quantity * total_dividend_value
+        company_price = float(CompaniesPrice.objects.filter(ticker=item.ticker.ticker).values_list('price')[0][0])
+        dividend_per_share = dividends.aggregate(total=Sum('value_of_dividend'))['total'] or 0
+        total_dividend = item.quantity * dividend_per_share
     
-        if total_dividend_value == 0:
+        if dividend_per_share == 0:
             continue
         
         dividend_table_data.append({
             'ticker': item.ticker.ticker,
             'name': item.ticker.name,
             'quantity': item.quantity,
-            'annual_dividend_value': dividend_value_per_stock,
-            'monthly_dividend_value': round(dividend_value_per_stock / 12,2),
-            'daily_dividend_value': round(dividend_value_per_stock / 365,2),
+            'total_dividend': total_dividend,
+            'dividend_per_share': dividend_per_share,
+            'dividend_yield': round(company_price / float(dividend_per_share), 2)
         })
         
         
-        total_annual_dividends += dividend_value_per_stock
-        dividend_yield += (total_dividend_value / item.average_purchase_price) * 100
+        total_annual_dividends += total_dividend
+        dividend_yield += (dividend_per_share / item.average_purchase_price) * 100
         number_of_dividends += 1
 
     if number_of_dividends > 0:
