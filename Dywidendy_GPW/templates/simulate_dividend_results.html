@@ -3,43 +3,120 @@
 <html lang="en">
 <head>
 {% block head %}
-{{ block.super }}
+    {{ block.super }}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulate Dividend Goal</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #343a40;
+            background: linear-gradient(135deg, #050d21, #1a2e4a);
             color: #f8f9fa;
             padding: 20px;
+            font-family: 'Roboto', sans-serif;
         }
-        .table-custom {
-            background-color: #212529; 
-            color: #f8f9fa; 
-            border: 1px solid #454d55; 
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            letter-spacing: 1.5px;
         }
-        .table-custom th,
-        .table-custom td {
-            border: 1px solid #454d55;
+
+        .navbar-custom {
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
         }
-        .table-custom thead {
-            background-color: #343a40; 
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #f8f9fa;
+            font-size: 1rem;
         }
+
+        .navbar-custom .nav-link:hover {
+            color: #17a2b8;
+        }
+
+        .card-custom {
+            background-color: rgba(33, 37, 41, 0.9);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            color: #f8f9fa;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card-dark-blue {
+            background-color: #1b3b5f;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            color: #f8f9fa;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
         .card-text {
-            text-align: center; 
-            font-size: 24px; 
+            text-align: center;
+            font-size: 1.25rem;
+        }
+
+        .btn-primary {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
         }
     </style>
 {% endblock head %}
 </head>
 <body>
 {% block content %}
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="collapse navbar-collapse show" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dividends' %}">Back to Dividends</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <div class="container">
         <h2>Dividend Goal Simulation Results</h2>
 
-        <div class="card mb-3">
-            <div class="card-body bg-dark">
+        <div class="card mb-3 card-dark-blue">
+            <div class="card-body">
                 <p class="card-text">Monthly Investment: {{ monthly_investment }} zł</p>
                 <p class="card-text">Current Dividend Yield: {{ dividend_yield }}%</p>
                 <p class="card-text">Current Monthly Dividends: {{ total_monthly_dividends }} zł</p>
@@ -47,29 +124,20 @@
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-custom table-striped">
-                <thead>
-                    <tr>
-                        <th>Year</th>
-                        <th>Portfolio Value (PLN)</th>
-                        <th>Monthly Dividends (PLN)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for result in results %}
-                    <tr>
-                        <td>{{ result.year }}</td>
-                        <td>{{ result.portfolio_value }} zł</td>
-                        <td>{{ result.monthly_dividends }} zł</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        {% for result in results %}
+        <div class="card card-custom">
+            <div class="card-body">
+                <h5 class="card-title text-center">Year {{ result.year }}</h5>
+                <p class="card-text">Portfolio Value: {{ result.portfolio_value }} zł</p>
+                <p class="card-text">Monthly Dividends: {{ result.monthly_dividends }} zł</p>
+            </div>
         </div>
+        {% endfor %}
 
-        <a href="{% url 'dividends' %}" class="btn btn-primary">Back to dividends portfolio</a>
-        <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'dividends' %}" class="btn btn-primary">Back to Dividends Portfolio</a>
+            <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
+        </div>
     </div>
 {% endblock content %}
 </body>
