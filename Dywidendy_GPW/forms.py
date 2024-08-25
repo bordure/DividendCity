@@ -30,13 +30,15 @@ class InvestmentForm(forms.Form):
 
 class AddStockForm(forms.Form):
     ticker = forms.CharField(widget=forms.TextInput(attrs={'id': 'ticker'}))
-    quantity = forms.DecimalField(max_digits=10) 
-    average_purchase_price = forms.DecimalField(max_digits=10, decimal_places=2)
+    quantity = forms.DecimalField(max_digits=8) 
+    average_purchase_price = forms.DecimalField(max_digits=8, decimal_places=2)
 
     def clean(self):
-        ticker_value = self.cleaned_data['ticker']
-        quantity = self.cleaned_data['quantity']
-        average_purchase_price = self.cleaned_data['average_purchase_price']
+        cleaned_data = super().clean()
+
+        ticker_value = cleaned_data.get('ticker')
+        quantity = cleaned_data.get('quantity')
+        average_purchase_price = cleaned_data.get('average_purchase_price')
 
         if ticker_value and not CompaniesName.objects.filter(ticker=ticker_value).exists():
             raise forms.ValidationError("Company with this ticker does not exist.")
@@ -47,4 +49,4 @@ class AddStockForm(forms.Form):
         if average_purchase_price is not None and average_purchase_price <= 0:
             raise forms.ValidationError("Average purchase price cannot be equal to 0 or less")
         
-        return self.cleaned_data
+        return cleaned_data
