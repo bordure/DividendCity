@@ -98,14 +98,21 @@ def portfolio(request):
 @login_required
 def add_stock(request):
     if request.method == 'POST':
-        form = AddStockForm(request.POST, user=request.user)
+        form = AddStockForm(request.POST)
         if form.is_valid():
             try:
-                ticker = str(form.cleaned_data['ticker']).split(':')[0]
+                ticker = form.cleaned_data['ticker']
                 company = CompaniesName.objects.get(ticker=ticker)
-                portfolio_item = form.save(commit=False)
-                portfolio_item.ticker = company
-                portfolio_item.user = request.user
+                
+                quantity = form.cleaned_data['quantity']
+                average_purchase_price = form.cleaned_data['average_purchase_price']
+                
+                portfolio_item = UserPortfolio(
+                    user=request.user,
+                    ticker=company,
+                    quantity=quantity,
+                    average_purchase_price=average_purchase_price
+                )
                 
                 existing_item = UserPortfolio.objects.filter(user=request.user, ticker=company).first()
                 if existing_item:
@@ -117,15 +124,16 @@ def add_stock(request):
                     existing_item.save()
                 else:
                     portfolio_item.save()
-                
+
                 return redirect('portfolio')
             except CompaniesName.DoesNotExist:
                 form.add_error('ticker', 'Company with this ticker does not exist.')
     else:
-        form = AddStockForm(user=request.user)
+        form = AddStockForm()
 
     companies = CompaniesName.objects.all()
     return render(request, 'add_stock.html', {'form': form, 'companies': companies})
+
 
 
 def autocomplete_companies(request):

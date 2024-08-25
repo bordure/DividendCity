@@ -28,28 +28,23 @@ class InvestmentForm(forms.Form):
             raise forms.ValidationError("Monthly investment must be a positive number.")
         return data
 
-class AddStockForm(forms.ModelForm):
+class AddStockForm(forms.Form):
     ticker = forms.CharField(widget=forms.TextInput(attrs={'id': 'ticker'}))
+    quantity = forms.DecimalField(max_digits=10) 
+    average_purchase_price = forms.DecimalField(max_digits=10, decimal_places=2)
 
-    class Meta:
-        model = UserPortfolio
-        fields = ['ticker', 'quantity', 'average_purchase_price']
-    
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
-        super(AddStockForm, self).__init__(*args, **kwargs)
-    
-    def save(self, commit=True):
-        instance = super(AddStockForm, self).save(commit=False)
-        instance.user = self.user
-        if commit:
-            instance.save()
-        return instance
+    def clean(self):
+        ticker_value = self.cleaned_data['ticker']
+        quantity = self.cleaned_data['quantity']
+        average_purchase_price = self.cleaned_data['average_purchase_price']
 
-    def clean_ticker(self):
-        ticker_value = self.cleaned_data.get('ticker')
-        print("ticker from forms", ticker_value)
-        if not CompaniesName.objects.filter(ticker=ticker_value).exists():
+        if ticker_value and not CompaniesName.objects.filter(ticker=ticker_value).exists():
             raise forms.ValidationError("Company with this ticker does not exist.")
-        company = CompaniesName.objects.get(ticker=ticker_value)
-        return company
+        
+        if quantity is not None and quantity <= 0:
+            raise forms.ValidationError("Quantity cannot be equal to 0 or less")
+        
+        if average_purchase_price is not None and average_purchase_price <= 0:
+            raise forms.ValidationError("Average purchase price cannot be equal to 0 or less")
+        
+        return self.cleaned_data
