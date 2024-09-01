@@ -7,40 +7,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ company.name }}</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #343a40;
-            color: #f8f9fa; 
-            padding: 20px;
-        }
-        .table-custom {
-            background-color: #212529; 
-            color: #f8f9fa;
-            border: 1px solid #454d55;
-        }
-        .table-custom th,
-        .table-custom td {
-            border: 1px solid #454d55;
-        }
-        .table-custom thead {
-            background-color: #343a40;
-        }
-        #dividendChart {
-            background-color: #212529; 
-            border: 1px solid #454d55; 
-            padding: 20px;
-        }
-    </style>
 {% endblock head %}
 </head>
 <body>
 {% block content %}
+<div id="pageContent" class="fade-in">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>{{ company.name }} ({{ company.ticker }})</h2>
             {% if in_portfolio %}
-            <a href="{% url 'edit_stock' portfolio_stock.id %}" class="btn btn-warning">Edit Stock in Portfolio</a>
+            <a href="{% url 'edit_stock' portfolio_stock.id %}" class="btn btn-warning"
+            hx-get="{% url 'edit_stock' portfolio_stock.id %}" 
+            hx-target="#pageContent" 
+            hx-push-url="true">Edit Stock in Portfolio</a>
             {% endif %}
         </div>
         
@@ -78,18 +57,14 @@
             </div>
         </div> 
         
-        <a href="{% url 'portfolio' %}" class="btn btn-primary">Back to Portfolio</a>
+        <a href="{% url 'portfolio' %}" class="btn btn-primary"
+                    hx-get="{% url 'portfolio' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Back to Portfolio</a>
         <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
     </div>
-
-    <!-- Bootstrap JS and dependencies (optional for certain features) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener("htmx:afterSettle", function() {
             const ctx = document.getElementById('dividendChart').getContext('2d');
             const dividendData = {
                 labels: {{ dividend_dates|safe }},
@@ -118,6 +93,7 @@
             const dividendChart = new Chart(ctx, config);
         });
     </script>
+    </div>
 {% endblock content %}
 </body>
 </html>

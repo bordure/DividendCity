@@ -7,50 +7,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Stock</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        /* Custom dark mode styles */
-        body {
-            background-color: #343a40;
-            color: #f8f9fa; /* Light text color */
-            padding: 20px;
-        }
-        .form-control-dark {
-            background-color: #212529;
-            color: #f8f9fa;
-            border: 1px solid #454d55;
-        }
-        .btn-primary-dark {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-        .btn-secondary-dark {
-            background-color: #6c757d;
-            border-color: #6c757d;
-        }
-        .btn-danger-dark {
-            background-color: #dc3545;
-            border-color: #dc3545;
-        }
-    </style>
 {% endblock head %}
 </head>
 <body>
 {% block content %}
+<div id="pageContent" class="fade-in">
     <div class="container">
         <h2>Edit Stock</h2>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-primary-dark">Save Changes</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
-        <a href="{% url 'portfolio' %}" class="btn btn-secondary-dark">Cancel</a>
+        <a href="{% url 'portfolio' %}" class="btn btn-secondary"
+                    hx-get="{% url 'portfolio' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Cancel</a>
         <form action="{% url 'delete_stock' stock.id %}" method="post" style="display:inline;">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger-dark" 
+            <button type="submit" class="btn btn-secondary" 
                     onclick="return confirm('Are you sure you want to delete this stock?');">Delete</button>
         </form>
     </div>
+</div>
 {% endblock content %}
 </body>
 </html>

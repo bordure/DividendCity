@@ -4,7 +4,6 @@
 <head>
     {% block head %}
     {{ block.super }}
-    <script src="https://unpkg.com/htmx.org@1.8.5"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
@@ -17,7 +16,10 @@
         <div class="navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'add_stock' %}">Add Stock</a>
+                    <a class="nav-link" href="{% url 'add_stock' %}"
+                    hx-get="{% url 'add_stock' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Add Stock</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'dividends' %}" 
@@ -26,7 +28,10 @@
                     hx-push-url="true">Show dividends</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'search' %}">Search Company</a>
+                    <a class="nav-link" href="{% url 'search' %}"
+                    hx-get="{% url 'search' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Search Company</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
@@ -47,7 +52,10 @@
             <div class="card-custom">
                 <div class="card-body-custom">
                     <div class="stock-header">
-                        <a href="{% url 'company_info' stock.ticker.ticker %}">{{ stock.ticker.ticker }}</a>
+                        <a href="{% url 'company_info' stock.ticker.ticker %}"
+                        hx-get="{% url 'company_info' stock.ticker.ticker %}" 
+                        hx-target="#pageContent" 
+                        hx-push-url="true">{{ stock.ticker.ticker }}</a>
                         <span class="badge {% if stock.profit_color == 'green' %}badge-custom badge-profit{% else %}badge-custom badge-loss{% endif %}">
                             {{ stock.profit }} zł
                         </span>

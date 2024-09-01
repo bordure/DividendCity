@@ -7,103 +7,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulate Dividend Goal</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #050d21, #1a2e4a);
-            color: #f8f9fa;
-            padding: 20px;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 30px;
-            letter-spacing: 1.5px;
-        }
-
-        .navbar-custom {
-            border-radius: 8px;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-        }
-
-        .navbar-custom .navbar-brand,
-        .navbar-custom .nav-link {
-            color: #f8f9fa;
-            font-size: 1rem;
-        }
-
-        .navbar-custom .nav-link:hover {
-            color: #17a2b8;
-        }
-
-        .card-custom {
-            background-color: rgba(33, 37, 41, 0.9);
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
-            color: #f8f9fa;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .card-dark-blue {
-            background-color: #1b3b5f;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
-            color: #f8f9fa;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .card-text {
-            text-align: center;
-            font-size: 1.25rem;
-        }
-
-        .btn-primary {
-            background-color: #17a2b8;
-            border-color: #17a2b8;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #138496;
-            border-color: #117a8b;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            border-color: #545b62;
-        }
-    </style>
 {% endblock head %}
 </head>
 <body>
 {% block content %}
+<div id="pageContent" class="fade-in">
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="collapse navbar-collapse show" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dividends' %}">Back to Dividends</a>
+                    <a class="nav-link" href="{% url 'dividends' %}"
+                    hx-get="{% url 'dividends' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Back to Dividends</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
@@ -135,10 +51,14 @@
         {% endfor %}
 
         <div class="d-flex justify-content-between mt-4">
-            <a href="{% url 'dividends' %}" class="btn btn-primary">Back to Dividends Portfolio</a>
+            <a href="{% url 'dividends' %}" class="btn btn-primary"
+                hx-get="{% url 'dividends' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Back to Dividends Portfolio</a>
             <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
         </div>
     </div>
+</div>
 {% endblock content %}
 </body>
 </html>

@@ -5,6 +5,10 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>  
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://unpkg.com/htmx.org@1.8.5"></script>
 <link rel="shortcut icon" type="image/png" href="{% static 'logotransparent.png' %}" >
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <style>
@@ -203,6 +207,106 @@
         }
 }
 
+label {
+            font-weight: bold;
+        }
+
+        .ui-autocomplete {
+            max-height: 200px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 1000;
+            background-color: rgba(33, 37, 41, 0.9);
+            border: 1px solid #454d55;
+        }
+
+        .ui-menu-item {
+            padding: 10px;
+            color: #f8f9fa;
+            background-color: rgba(33, 37, 41, 0.9);
+            border-bottom: 1px solid #454d55;
+        }
+
+        .ui-menu-item:hover {
+            background-color: #495057;
+            cursor: pointer;
+        }
+
+        .ui-helper-hidden-accessible {
+            display: none;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            background-color: rgba(33, 37, 41, 0.9);
+            color: #f8f9fa;
+            border: 1px solid #454d55;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            background-color: rgba(33, 37, 41, 0.9);
+            color: #f8f9fa;
+            border-color: #17a2b8;
+            box-shadow: none;
+        }
+
+        .table-custom {
+            background-color: #212529; 
+            color: #f8f9fa;
+            border: 1px solid #454d55;
+        }
+        .table-custom th,
+        .table-custom td {
+            border: 1px solid #454d55;
+        }
+        .table-custom thead {
+            background-color: #343a40;
+        }
+        #dividendChart {
+            background-color: #212529; 
+            border: 1px solid #454d55; 
+            padding: 20px;
+        }
+
+        .card-dark-blue {
+            background-color: #1b3b5f;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            color: #f8f9fa;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card-text {
+            text-align: center;
+            font-size: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+        }
+
+        .stock-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stock-header a {
+            color: #f8f9fa;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .stock-header a:hover {
+            color: #17a2b8;
+        }
 
 </style>
 {% endblock head %}

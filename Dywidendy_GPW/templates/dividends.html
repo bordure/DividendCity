@@ -10,8 +10,8 @@
 {% endblock head %}
 </head>
 <body>
-<div id="pageContent" class="fade-in">
 {% block content %}
+<div id="pageContent" class="fade-in">
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="collapse navbar-collapse show" id="navbarNav">
             <ul class="navbar-nav ml-auto">
@@ -29,10 +29,16 @@
                     hx-push-url="true">Show Dividends Calendar</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'set_dividend_goal' %}">Set Dividend Goal</a>
+                    <a class="nav-link" href="{% url 'set_dividend_goal' %}"
+                    hx-get="{% url 'set_dividend_goal' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Set Dividend Goal</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'simulate_dividend_results' %}">Simulate Future Dividend</a>
+                    <a class="nav-link" href="{% url 'simulate_dividend_results' %}"
+                    hx-get="{% url 'simulate_dividend_results' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Simulate Future Dividend</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>

@@ -7,134 +7,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Stock</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- jQuery UI CSS -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-    <style>
-        body {
-            background: linear-gradient(135deg, #050d21, #1a2e4a);
-            color: #f8f9fa;
-            padding: 20px;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        .navbar-custom {
-            border-radius: 8px;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-        }
-
-        .navbar-custom .navbar-brand,
-        .navbar-custom .nav-link {
-            color: #f8f9fa;
-            font-size: 1rem;
-        }
-
-        .navbar-custom .nav-link:hover {
-            color: #17a2b8;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            background-color: rgba(33, 37, 41, 0.9);
-            color: #f8f9fa;
-            border: 1px solid #454d55;
-            border-radius: 8px;
-            padding: 10px;
-        }
-
-        .form-control:focus {
-            background-color: rgba(33, 37, 41, 0.9);
-            color: #f8f9fa;
-            border-color: #17a2b8;
-            box-shadow: none;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        .ui-autocomplete {
-            max-height: 200px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            z-index: 1000;
-            background-color: rgba(33, 37, 41, 0.9);
-            border: 1px solid #454d55;
-            border-radius: 8px;
-        }
-
-        .ui-menu-item {
-            padding: 10px;
-            color: #f8f9fa;
-            background-color: rgba(33, 37, 41, 0.9);
-            border-bottom: 1px solid #454d55;
-            border-radius: 8px;
-        }
-
-        .ui-menu-item:hover {
-            background-color: #495057;
-            cursor: pointer;
-        }
-
-        .ui-helper-hidden-accessible {
-            display: none;
-        }
-
-        .btn-primary {
-            background-color: #17a2b8;
-            border-color: #17a2b8;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #138496;
-            border-color: #117a8b;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            border-color: #545b62;
-        }
-
-        input[type="text"],
-        input[type="number"] {
-            background-color: rgba(33, 37, 41, 0.9);
-            color: #f8f9fa;
-            border: 1px solid #454d55;
-            border-radius: 8px;
-            padding: 10px;
-        }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus {
-            background-color: rgba(33, 37, 41, 0.9);
-            color: #f8f9fa;
-            border-color: #17a2b8;
-            box-shadow: none;
-        }
-    </style>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
     <script>
@@ -159,11 +31,15 @@
 </head>
 <body>
 {% block content %}
+<div id="pageContent" class="fade-in">
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="collapse navbar-collapse show" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'portfolio' %}">Back to Portfolio</a>
+                    <a class="nav-link" href="{% url 'portfolio' %}"
+                    hx-get="{% url 'portfolio' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Back to Portfolio</a>
                 </li>
             </ul>
         </div>
@@ -181,7 +57,7 @@
             </div>
         </div>
     </div>
-
+</div>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 {% endblock content %}
 </body>

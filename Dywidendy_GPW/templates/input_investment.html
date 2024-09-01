@@ -121,11 +121,15 @@
 </head>
 <body>
 {% block content %}
+<div id="pageContent" class="fade-in">
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="collapse navbar-collapse show" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dividends' %}">Back to Dividends</a>
+                    <a class="nav-link" href="{% url 'dividends' %}"
+                    hx-get="{% url 'dividends' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Back to Dividends</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
@@ -142,6 +146,7 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
+</div>
 {% endblock content %}
 </body>
 </html>
