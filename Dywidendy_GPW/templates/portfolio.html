@@ -4,153 +4,15 @@
 <head>
     {% block head %}
     {{ block.super }}
+    <script src="https://unpkg.com/htmx.org@1.8.5"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #050d21, #1a2e4a);
-            color: #f8f9fa;
-            padding: 20px;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 30px;
-            letter-spacing: 1.5px;
-        }
-
-        .portfolio-summary {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .portfolio-summary p {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .navbar-custom {
-            padding: 10px 15px;
-            margin-bottom: 20px;
-        }
-
-        .navbar-custom .navbar-brand,
-        .navbar-custom .nav-link {
-            color: #f8f9fa;
-            font-size: 1rem;
-        }
-
-        .navbar-custom .nav-link:hover {
-            color: #17a2b8;
-        }
-
-        .card-custom {
-            background-color: rgba(33, 37, 41, 0.9);
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
-            color: #f8f9fa;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .card-custom:hover {
-            transform: translateY(-5px);
-            box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-body-custom {
-            padding: 20px;
-        }
-
-        .stock-header {
-            font-size: 1.5rem;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stock-header a {
-            color: #f8f9fa;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .stock-header a:hover {
-            color: #17a2b8;
-        }
-
-        .badge-custom {
-            font-size: 1rem;
-            padding: 5px 10px;
-            border-radius: 10px;
-        }
-
-        .badge-profit {
-            background-color: #28a745;
-        }
-
-        .badge-loss {
-            background-color: #dc3545;
-        }
-
-        .list-group-custom {
-            background-color: transparent;
-            border: none;
-        }
-
-        .list-group-item-custom {
-            background-color: #343a40;
-            border: none;
-            color: #f8f9fa;
-            padding: 15px 20px;
-            font-size: 1.1rem;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .list-group-item-custom:hover {
-            background-color: #495057;
-            transform: translateY(-2px);
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .stock-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .grid-container {
-                grid-template-columns: 1fr;
-            }
-
-            .portfolio-summary p {
-                font-size: 1.2rem;
-            }
-
-            .navbar-custom .navbar-brand,
-            .navbar-custom .nav-link {
-                font-size: 0.9rem;
-            }
-        }
-    </style>
     {% endblock head %}
 </head>
 <body>
     {% block content %}
+    <div id="pageContent" class="fade-in">
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
@@ -158,7 +20,10 @@
                     <a class="nav-link" href="{% url 'add_stock' %}">Add Stock</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dividends' %}">Show Dividends</a>
+                    <a class="nav-link" href="{% url 'dividends' %}" 
+                    hx-get="{% url 'dividends' %}" 
+                    hx-target="#pageContent" 
+                    hx-push-url="true">Show dividends</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'search' %}">Search Company</a>
@@ -210,11 +75,8 @@
             </div>
             {% endfor %}
         </div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </div>   
     {% endblock content %}
+</div>
 </body>
 </html>
